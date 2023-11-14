@@ -1,2 +1,2 @@
 print('Welcome to our team!')
-print('мяу')
+print('мяу мяу')
