@@ -8,7 +8,6 @@ from random import random
 
 FPS = 30 # Частота обновления кадров (30 к/с)
 
-pygame.init() # Инициализируем библиотеку pygame
 
 # Описываем цвета RGB-схемы
 white = (255, 255, 255)
@@ -34,7 +33,7 @@ LEFT = 10
 BOTTOM = 10
 
 # ширина ленты выдачи
-TOP = 100
+TOP = 120
 
 # координата кассы
 
@@ -47,13 +46,21 @@ DS = 5
 x1 = LEFT
 y1 = TOP + (HEIGHT - BOTTOM - TOP) /2
 
+# время оплаты
+
+pay_time = 1 * FPS
+
+
+pygame.init() # Инициализируем библиотеку pygame
+
+
 window=pygame.display.set_mode((WIDTH,HEIGHT)) # Задаем размеры игрового окна
 
-# Координаты охранника
-#x1 = 50 Координата охранника по Ох
-#y1 = 50 Координата охранника по Оy
-#x1_change = 0 Изменение координаты охранника по Ох
-#y1_change = 0 Изменение координаты охранника по Оy
+#картинки
+dollar = pygame.image.load('dollar.png').convert_alpha()
+dollar = pygame.transform.scale(dollar, (40, 50))
+dollar_rect = dollar.get_rect()
+
 
 def decision(probability):
     """
@@ -100,16 +107,18 @@ class Student():
     def __init__(self, window: pygame.Surface):
         self.window = window
         self.money = 1
-        self.x = 5
-        self.y = 80
         self.v = 5
         self.r = 10
+        self.x = -self.r
+        self.y = 100
         self.state = 0
         # что делает студент
         # 0 - идет вдоль ленты
         # 1 - расплачивается
         # 2 - идет к столу
         self.color = green
+        # время оплаты + время отхода от кассы
+        self.pay_time = pay_time + 2 * self.r // self.v
 
     def move(self, obj):
         #учет студента спереди
@@ -120,7 +129,23 @@ class Student():
             self.x += self.v
             if self.x >= PAY_DESK:
                 self.state = 1
+            return
+        if self.state == 1:
+            if self.pay_time <= 2 * self.r // self.v:
+                self.y += self.v
+                if self.pay_time == 1:
+                    self.state = 2
+                else:
+                    self.pay_time -= 1
+            else:
+                self.pay_time -= 1
 
+    def pay(self):
+        if self.state == 1:
+            dollar.set_alpha(255 * (self.pay_time - 2 * self.r // self.v) // pay_time)
+            dollar_rect.center = self.x, self.y - (pay_time - self.pay_time)
+            self.window.blit(dollar, dollar_rect)
+        
     def draw(self):
         pygame.draw.circle(self.window, self.color, (self.x, self.y), self.r)
 
@@ -129,6 +154,7 @@ class Thief(Student):
         super().__init__(window)
         self.color = red
         self.money = 0
+        self.pay_time = 2 * self.r // self.v
     
 
 
@@ -153,10 +179,11 @@ students = []
 while gameNow:
 
     window.fill(white)
-
     security.draw()
+
     for s in students:
         s.draw()
+        s.pay()
     
     pygame.display.update()
     clock.tick(FPS)
