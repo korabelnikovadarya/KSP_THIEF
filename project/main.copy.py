@@ -131,9 +131,9 @@ class Student():
 
     def draw(self):
         pygame.draw.circle(self.window, self.color, (self.x, self.y), self.r)
-
+    # Проверяем, находится ли охранник рядом со студентом, который не является вором, если да, то количество жизней охранника уменьшается
     def hittest(self, obj):
-        if (obj.r / 2 + self.r) >= (((self.x - (obj.x + obj.r / 2)) ** 2 + (self.y - (obj.y + obj.r / 2)) ** 2)) ** 0.5:
+        if ((obj.r / 2 + self.r) >= (((self.x - (obj.x + obj.r / 2)) ** 2 + (self.y - (obj.y + obj.r / 2)) ** 2)) ** 0.5) and self.money == 1:
             obj.live -= 1
             live = obj.live
 
