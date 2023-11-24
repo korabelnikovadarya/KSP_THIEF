@@ -1,16 +1,13 @@
 # Прописываем нижние две строки, чтобы не было пайгеймовской надписи "Hello from the pygame community"
 from os import environ
-
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 import pygame  # Импортируем библиотеку pygame
-from random import randint
-from random import random
-
-
+from random import randint, random
+import time
+# Начало отсчета времени
+start = time.time()
 FPS = 30  # Частота обновления кадров (30 к/с)
-
-pygame.init()  # Инициализируем библиотеку pygame
 
 # Описываем цвета RGB-схемы
 white = (255, 255, 255)
@@ -35,7 +32,7 @@ LEFT = 10
 BOTTOM = 10
 
 # ширина ленты выдачи
-TOP = 100
+TOP = 145
 
 # координата кассы
 
@@ -48,15 +45,39 @@ DS = 5
 x1 = LEFT
 y1 = TOP + (HEIGHT - BOTTOM - TOP) / 2
 
-# количетсво жизней охранника в начале
-live = 3
+# время оплаты
+
+pay_time = 1 * FPS
+
+pygame.init()  # Инициализируем библиотеку pygame
+
 window = pygame.display.set_mode((WIDTH, HEIGHT))  # Задаем размеры игрового окна
+
+# Количество жизней охранника
+live = 3
+# картинки
+# Доллар при оплате
+dollar = pygame.image.load('dollar.png').convert_alpha()
+dollar = pygame.transform.scale(dollar, (40, 50))
+dollar_rect = dollar.get_rect()
+# Сердечки-жизни охранника
+heart = pygame.image.load('heart.png').convert_alpha()
+heart = pygame.transform.scale(heart, (50, 50))
+heart_rect = heart.get_rect()
+# Основной фон
+background = pygame.image.load('background_try.jpg')
+background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+# Еда
+food1 = pygame.image.load('food1.png').convert_alpha()
+food1 = pygame.transform.scale(food1, (40, 50))
+food1_rect = food1.get_rect()
+food2 = pygame.image.load('food2.png').convert_alpha()
+food2 = pygame.transform.scale(food2, (40, 50))
+food2_rect = food2.get_rect()
 
 
 def decision(probability):
-    """
-    выдает 1 с данной вероятностью
-    """
+    # Выдает 1 с данной вероятностью
     return random() < probability
 
 
@@ -93,24 +114,27 @@ class Security():
     def draw(self):
         pygame.draw.rect(window, black, [self.x, self.y, self.r, self.r])
 
-    # Проверяем, насколько далеко охранник находится от студента
-
 
 class Student():
     def __init__(self, window: pygame.Surface):
         self.window = window
         self.money = 1
-        self.x = 5
-        self.y = 80
         self.v = 5
-        self.r = 10
+        self.r = 20
+        self.x = -self.r
+        self.y = 100
         self.state = 0
+        self.kill = 0 # Переменная, в которую запоминаем, подходил ли охранник или нет
+        self.track = 0  # Задаем для студента "случайную" траекторию движения к столу
         # что делает студент
         # 0 - идет вдоль ленты
         # 1 - расплачивается
         # 2 - идет к столу
         self.color = green
-
+        # время оплаты + время отхода от кассы
+        self.time_goaway = (2 * self.r + DS) // self.v
+        self.pay_time = pay_time + self.time_goaway
+        self.yesno = 0
     def move(self, obj):
         # учет студента спереди
         if obj and obj.state == 0 and obj.x - obj.r <= self.x + self.r + DS:
@@ -120,22 +144,44 @@ class Student():
             self.x += self.v
             if self.x >= PAY_DESK:
                 self.state = 1
-
+            return
         if self.state == 1:
-            self.v = randint(-1,6)
-            self.vy = randint(1, 5)
-            self.y += self.vy
-            self.x -= self.v
+            if self.pay_time <= self.time_goaway:
+                self.y += self.v
+                if self.pay_time == 1:
+                    self.state = 2
+                else:
+                    self.pay_time -= 1
+            else:
+                self.pay_time -= 1
 
+
+    def pay(self):
+        if self.state == 1:
+            dollar.set_alpha(255 * (self.pay_time - self.time_goaway) // pay_time)
+            dollar_rect.center = self.x, self.y - (pay_time - self.pay_time)
+            self.window.blit(dollar, dollar_rect)
 
 
     def draw(self):
-        pygame.draw.circle(self.window, self.color, (self.x, self.y), self.r)
+        # Если охранник поймал красного, то этот красный пропадает с игрового поля
+        if not(self.kill == 1 and self.money == 0):
+         pygame.draw.circle(self.window, self.color, (self.x, self.y), self.r)
+
+         # Только один раз для данного студента выбираем траекторию движения
+         if self.yesno == 0:
+             self.track = randint(0, 1)
+             print(self.track)
+             self.yesno = 1
+
     # Проверяем, находится ли охранник рядом со студентом, который не является вором, если да, то количество жизней охранника уменьшается
     def hittest(self, obj):
-        if ((obj.r / 2 + self.r) >= (((self.x - (obj.x + obj.r / 2)) ** 2 + (self.y - (obj.y + obj.r / 2)) ** 2)) ** 0.5) and self.money == 1:
+        if ((obj.r / 2 + self.r) >= (((self.x - (obj.x + obj.r / 2)) ** 2 + (self.y - (obj.y + obj.r / 2)) ** 2)) ** 0.5) and self.money == 1 and self.kill == 0:
             obj.live -= 1
-            live = obj.live
+            self.kill = 1 # Ставим единицу, чтобы больше жизни у охранника не отнимались из-за данного студента
+        if ((obj.r / 2 + self.r) >= (((self.x - (obj.x + obj.r / 2)) ** 2 + (self.y - (obj.y + obj.r / 2)) ** 2)) ** 0.5) and self.money == 0:
+            self.kill = 1
+
 
 
 class Thief(Student):
@@ -143,40 +189,85 @@ class Thief(Student):
         super().__init__(window)
         self.color = red
         self.money = 0
+        self.pay_time = self.time_goaway
+# Класс с описанием траекторий движения студентов до столов
+class Trajectory():
+    def __init__(self, window: pygame.Surface):
+        self.v = 5
+        self.window = window
+
+    def move0(self, obj):
+        if obj.state == 2:
+            if obj.y < 515 and obj.x > 180:
+                obj.y += self.v
+            if obj.y >= 515 and obj.x >= 180:
+                obj.x -= self.v
+            if obj.x < 180 and obj.y > 415:
+                obj.y -= self.v
+            if obj.x < 180 and obj.y <= 415:
+                # Здесь может быть анимация еды:
+                obj.x -= self.v
+
+
+
+    def move1(self, obj):
+        if obj.state == 2:
+            if obj.y < 515 and obj.x > 180:
+                obj.y += self.v
+            if obj.y >= 515 and obj.x >= 180:
+                obj.x -= self.v
+            if obj.x < 180 and obj.y > 460:
+                obj.y -= self.v
+            if obj.x < 180 and obj.y <= 460:
+                # Здесь может быть анимация еды:
+                obj.x -= self.v
+
+
+    def move2(self, obj):
+        pass
 
 
 # Начало координат - левый верхний угол
 
 clock = pygame.time.Clock()  # Перменнная для подсчета времени
 
-# Выводим количество жизней охранника на экран
-
-
-
-
 pygame.display.update()  # Обновляем содержимое игрового поля
 pygame.display.set_caption("KSP_thief")  # Добавляем название игры в левом верхнем углу игрового окна
 gameNow = True  # Переменная, чтобы по ее значению понимать, идет игра или нет
 
 security = Security(window, x1, y1)
-
+trajectory = Trajectory(window)
 students = []
-
 
 # Функция pygame.event.get() возвращает все события, происходящие на игровом поле:
 while gameNow:
     window.fill(white)
+    window.blit(background, (0, 0))
     live = security.live
-    # Вывод на экран количества жизней охранника
-    font = pygame.font.SysFont('Comic Sans MS', 20, 6)
-    text = font.render(f'{str(live)}', True, (150, 100, 160))
-    place = text.get_rect(center=(20, 550))
-    window.blit(text, place)
+
+    if live == 1:
+        window.blit(heart, (50, HEIGHT - 70), heart_rect)
+    if live == 2:
+        window.blit(heart, (50, HEIGHT - 70), heart_rect)
+        window.blit(heart, (150, HEIGHT - 70), heart_rect)
+    if live == 3:
+        window.blit(heart, (50, HEIGHT - 70), heart_rect)
+        window.blit(heart, (150, HEIGHT - 70), heart_rect)
+        window.blit(heart, (250, HEIGHT - 70), heart_rect)
+    if live < 1:
+        gameNow = not (gameNow)
 
     security.draw()
+
     for s in students:
         s.draw()
+        s.pay()
         s.hittest(security)
+        if s.track == 0:
+            trajectory.move0(s)
+        elif s.track == 1:
+            trajectory.move1(s)
+
     pygame.display.update()
     clock.tick(FPS)
 
@@ -203,5 +294,13 @@ while gameNow:
         else:
             students[i].move(students[i - 1])
 
+
 pygame.quit()
 quit()
+
+
+
+
+
+
+
