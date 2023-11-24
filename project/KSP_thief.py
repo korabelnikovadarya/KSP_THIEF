@@ -36,6 +36,13 @@ BOTTOM = 10
 # ширина ленты выдачи
 TOP = 100
 
+# координата кассы
+
+PAY_DESK = WIDTH - 50
+
+# расстояние между студентами
+DS = 5
+
 #координаты охранника в начале игры
 x1 = LEFT
 y1 = TOP + (HEIGHT - BOTTOM - TOP) /2
@@ -95,7 +102,7 @@ class Student():
         self.money = 1
         self.x = 5
         self.y = 80
-        self.v = 10
+        self.v = 5
         self.r = 10
         self.state = 0
         # что делает студент
@@ -104,9 +111,15 @@ class Student():
         # 2 - идет к столу
         self.color = green
 
-    def move(self):
+    def move(self, obj):
+        #учет студента спереди
+        if obj and obj.state != 2 and obj.x - obj.r <= self.x + self.r + DS:
+                self.x = obj.x - obj.r - self.r - DS
+                return 
         if self.state == 0:
             self.x += self.v
+            if self.x >= PAY_DESK:
+                self.state = 1
 
     def draw(self):
         pygame.draw.circle(self.window, self.color, (self.x, self.y), self.r)
@@ -143,8 +156,10 @@ while gameNow:
 
     security.draw()
     for s in students:
-        s.move()
         s.draw()
+    
+    pygame.display.update()
+    clock.tick(FPS)
     
     #генерация студента
     if decision(prob_stud):
@@ -153,8 +168,6 @@ while gameNow:
         else:
             students.append(Thief(window))
 
-    pygame.display.update()
-    clock.tick(FPS)
 
     for event in pygame.event.get():
 
@@ -164,6 +177,13 @@ while gameNow:
     # Движение охранника
     keys = pygame.key.get_pressed()
     security.move(keys)
+
+    for i in range(len(students)):
+        if i == 0:
+            #самый первый студент
+            students[i].move(0)
+        else:
+            students[i].move(students[i - 1])
     
 pygame.quit()
 quit()
