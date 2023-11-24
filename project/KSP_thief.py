@@ -61,6 +61,9 @@ dollar = pygame.image.load('dollar.png').convert_alpha()
 dollar = pygame.transform.scale(dollar, (40, 50))
 dollar_rect = dollar.get_rect()
 
+background = pygame.image.load('background_try.jpg')
+background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+
 
 def decision(probability):
     """
@@ -108,7 +111,7 @@ class Student():
         self.window = window
         self.money = 1
         self.v = 5
-        self.r = 10
+        self.r = 20
         self.x = -self.r
         self.y = 100
         self.state = 0
@@ -118,7 +121,8 @@ class Student():
         # 2 - идет к столу
         self.color = green
         # время оплаты + время отхода от кассы
-        self.pay_time = pay_time + 2 * self.r // self.v
+        self.time_goaway = (2 * self.r + DS) // self.v
+        self.pay_time = pay_time + self.time_goaway
 
     def move(self, obj):
         #учет студента спереди
@@ -131,7 +135,7 @@ class Student():
                 self.state = 1
             return
         if self.state == 1:
-            if self.pay_time <= 2 * self.r // self.v:
+            if self.pay_time <= self.time_goaway:
                 self.y += self.v
                 if self.pay_time == 1:
                     self.state = 2
@@ -142,7 +146,7 @@ class Student():
 
     def pay(self):
         if self.state == 1:
-            dollar.set_alpha(255 * (self.pay_time - 2 * self.r // self.v) // pay_time)
+            dollar.set_alpha(255 * (self.pay_time - self.time_goaway) // pay_time)
             dollar_rect.center = self.x, self.y - (pay_time - self.pay_time)
             self.window.blit(dollar, dollar_rect)
         
@@ -154,7 +158,7 @@ class Thief(Student):
         super().__init__(window)
         self.color = red
         self.money = 0
-        self.pay_time = 2 * self.r // self.v
+        self.pay_time = self.time_goaway
     
 
 
@@ -179,6 +183,7 @@ students = []
 while gameNow:
 
     window.fill(white)
+    window.blit(background, (0, 0))
     security.draw()
 
     for s in students:
