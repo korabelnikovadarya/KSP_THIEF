@@ -4,7 +4,8 @@ from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 import pygame  # Импортируем библиотеку pygame
-from random import randint, random
+from random import randint
+from random import random
 
 
 FPS = 30  # Частота обновления кадров (30 к/с)
@@ -36,18 +37,21 @@ BOTTOM = 10
 # ширина ленты выдачи
 TOP = 100
 
+# координата кассы
+
+PAY_DESK = WIDTH - 50
+
+# расстояние между студентами
+DS = 5
+
 # координаты охранника в начале игры
 x1 = LEFT
 y1 = TOP + (HEIGHT - BOTTOM - TOP) / 2
 
+# количетсво жизней охранника в начале
+live = 3
 window = pygame.display.set_mode((WIDTH, HEIGHT))  # Задаем размеры игрового окна
 
-
-# Координаты охранника
-# x1 = 50 Координата охранника по Ох
-# y1 = 50 Координата охранника по Оy
-# x1_change = 0 Изменение координаты охранника по Ох
-# y1_change = 0 Изменение координаты охранника по Оy
 
 def decision(probability):
     """
@@ -89,6 +93,8 @@ class Security():
     def draw(self):
         pygame.draw.rect(window, black, [self.x, self.y, self.r, self.r])
 
+    # Проверяем, насколько далеко охранник находится от студента
+
 
 class Student():
     def __init__(self, window: pygame.Surface):
@@ -96,8 +102,7 @@ class Student():
         self.money = 1
         self.x = 5
         self.y = 80
-        self.v = 10
-        self.vy = 0
+        self.v = 5
         self.r = 10
         self.state = 0
         # что делает студент
@@ -106,23 +111,31 @@ class Student():
         # 2 - идет к столу
         self.color = green
 
-    def move(self):
+    def move(self, obj):
+        # учет студента спереди
+        if obj and obj.state == 0 and obj.x - obj.r <= self.x + self.r + DS:
+            self.x = obj.x - obj.r - self.r - DS
+            return
         if self.state == 0:
             self.x += self.v
-        else:
+            if self.x >= PAY_DESK:
+                self.state = 1
+
+        if self.state == 1:
             self.v = randint(-1,6)
             self.vy = randint(1, 5)
             self.y += self.vy
             self.x -= self.v
 
-        if self.x > 500:
-            self.state = 1
-            self.vy = randint(1,5)
+
 
     def draw(self):
         pygame.draw.circle(self.window, self.color, (self.x, self.y), self.r)
 
-
+    def hittest(self, obj):
+        if (obj.r / 2 + self.r) >= (((self.x - (obj.x + obj.r / 2)) ** 2 + (self.y - (obj.y + obj.r / 2)) ** 2)) ** 0.5:
+            obj.live -= 1
+            live = obj.live
 
 
 class Thief(Student):
@@ -136,6 +149,11 @@ class Thief(Student):
 
 clock = pygame.time.Clock()  # Перменнная для подсчета времени
 
+# Выводим количество жизней охранника на экран
+
+
+
+
 pygame.display.update()  # Обновляем содержимое игрового поля
 pygame.display.set_caption("KSP_thief")  # Добавляем название игры в левом верхнем углу игрового окна
 gameNow = True  # Переменная, чтобы по ее значению понимать, идет игра или нет
@@ -144,26 +162,30 @@ security = Security(window, x1, y1)
 
 students = []
 
+
 # Функция pygame.event.get() возвращает все события, происходящие на игровом поле:
 while gameNow:
-
     window.fill(white)
+    live = security.live
+    # Вывод на экран количества жизней охранника
+    font = pygame.font.SysFont('Comic Sans MS', 20, 6)
+    text = font.render(f'{str(live)}', True, (150, 100, 160))
+    place = text.get_rect(center=(20, 550))
+    window.blit(text, place)
 
     security.draw()
     for s in students:
-        s.move()
         s.draw()
+        s.hittest(security)
+    pygame.display.update()
+    clock.tick(FPS)
 
     # генерация студента
     if decision(prob_stud):
         if decision(prob_not_thief):
             students.append(Student(window))
-
         else:
             students.append(Thief(window))
-
-    pygame.display.update()
-    clock.tick(FPS)
 
     for event in pygame.event.get():
 
@@ -173,6 +195,13 @@ while gameNow:
     # Движение охранника
     keys = pygame.key.get_pressed()
     security.move(keys)
+
+    for i in range(len(students)):
+        if i == 0:
+            # самый первый студент
+            students[i].move(0)
+        else:
+            students[i].move(students[i - 1])
 
 pygame.quit()
 quit()
