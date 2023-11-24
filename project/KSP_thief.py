@@ -4,27 +4,57 @@ environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 import pygame # Импортируем библиотеку pygame
 from random import randint
+from random import random
+
 FPS = 30 # Частота обновления кадров (30 к/с)
 
 pygame.init() # Инициализируем библиотеку pygame
+
 # Описываем цвета RGB-схемы
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (255, 0, 0)
 green = (0, 255, 0)
 
-go = 'None'
-x1 = 0
-y1 = 270
-#money = 0
-x = 5
-window=pygame.display.set_mode((800,600)) # Задаем размеры игрового окна
+# генерация студента каждые 2 секунды (в среднем)
+prob_stud = 1/ (FPS*2)
+
+# доля честных студентов
+prob_not_thief = 0.5
+
+
+# границы поля
+WIDTH = 800
+HEIGHT = 600
+
+# границы слева, справа и снизу
+
+RIGHT = 10
+LEFT = 10
+BOTTOM = 10
+
+# ширина ленты выдачи
+TOP = 100
+
+#координаты охранника в начале игры
+x1 = LEFT
+y1 = TOP + (HEIGHT - BOTTOM - TOP) /2
+
+window=pygame.display.set_mode((WIDTH,HEIGHT)) # Задаем размеры игрового окна
 
 # Координаты охранника
 #x1 = 50 Координата охранника по Ох
 #y1 = 50 Координата охранника по Оy
 #x1_change = 0 Изменение координаты охранника по Ох
 #y1_change = 0 Изменение координаты охранника по Оy
+
+def decision(probability):
+    """
+    выдает 1 с данной вероятностью
+    """
+    return random() < probability
+
+
 
 class Security():
     def __init__(self, window: pygame.Surface, x, y):
@@ -33,25 +63,31 @@ class Security():
         self.y = y
         self.live = 3
         self.v = 10
+        self.r = 50
 
-    def move(self, key):
-        if key == pygame.K_LEFT:
+    def move(self, keys):
+        if keys[pygame.K_LEFT]:
             self.x -= self.v
+            if self.x < LEFT:
+                self.x = LEFT
 
-        elif key == pygame.K_RIGHT:
+        elif keys[pygame.K_RIGHT]:
             self.x += self.v
+            if self.x + self.r > WIDTH - RIGHT:
+                self.x = WIDTH - RIGHT - self.r
 
-        elif key == pygame.K_UP:
+        elif keys[pygame.K_UP]:
             self.y -= self.v # Ставим здесь знак "минус", так как движение вверх, но координата по Оу должна уменьшаться
+            if self.y < TOP:
+                self.y = TOP
 
-        elif key == pygame.K_DOWN:
+        elif keys[pygame.K_DOWN]:
             self.y += self.v
-
-        else:
-            print(0)
+            if self.y + self.r > HEIGHT - BOTTOM:
+                self.y = HEIGHT - BOTTOM - self.r
 
     def draw(self):
-        pygame.draw.rect(window, black, [x1, y1, 50, 50])
+        pygame.draw.rect(window, black, [self.x, self.y,self.r, self.r])
 
 class Student():
     def __init__(self, window: pygame.Surface):
@@ -60,18 +96,26 @@ class Student():
         self.x = 5
         self.y = 80
         self.v = 10
+        self.r = 10
+        self.state = 0
+        # что делает студент
+        # 0 - идет вдоль ленты
+        # 1 - расплачивается
+        # 2 - идет к столу
         self.color = green
 
     def move(self):
-        self.x += self.v
+        if self.state == 0:
+            self.x += self.v
 
     def draw(self):
-        pygame.draw.circle(self.window, black, (self.x, self.y), 25)
+        pygame.draw.circle(self.window, self.color, (self.x, self.y), self.r)
 
 class Thief(Student):
-    def __init__(self, window: pygame.Surface, money):
-        super().__init__(window, money)
+    def __init__(self, window: pygame.Surface):
+        super().__init__(window)
         self.color = red
+        self.money = 0
     
 
 
@@ -87,29 +131,40 @@ pygame.display.set_caption("KSP_thief") # Добавляем название и
 gameNow = True # Переменная, чтобы по ее значению понимать, идет игра или нет
 
 security = Security(window, x1, y1)
-students = Student(window)
+
+students = []
+
+
 
 # Функция pygame.event.get() возвращает все события, происходящие на игровом поле:
 while gameNow:
+
+    window.fill(white)
+
+    security.draw()
+    for s in students:
+        s.move()
+        s.draw()
+    
+    #генерация студента
+    if decision(prob_stud):
+        if decision(prob_not_thief):
+            students.append(Student(window))
+        else:
+            students.append(Thief(window))
+
+    pygame.display.update()
+    clock.tick(FPS)
 
     for event in pygame.event.get():
 
         if event.type==pygame.QUIT: # Если нажат крестик, то окно игры закрывается
             gameNow = False
-
-        # Движение охранника
-        if event.type == pygame.KEYDOWN:
-            security.move(event.key)
-            print(event.key)
-
-    window.fill(white)
-
-    security.draw()
-    students.move()
-    students.draw()
-    #students.new_students()
-    pygame.display.update()
-    clock.tick(FPS)
+        
+    # Движение охранника
+    keys = pygame.key.get_pressed()
+    security.move(keys)
+    
 pygame.quit()
 quit()
 
