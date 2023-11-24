@@ -109,9 +109,11 @@ class Student():
     def move(self):
         if self.state == 0:
             self.x += self.v
-        elif self.state == 1:
+        else:
+            self.v = randint(-1,6)
             self.vy = randint(1, 5)
             self.y += self.vy
+            self.x -= self.v
 
         if self.x > 500:
             self.state = 1
