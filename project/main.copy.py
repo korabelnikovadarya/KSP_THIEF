@@ -32,11 +32,11 @@ LEFT = 10
 BOTTOM = 10
 
 # ширина ленты выдачи
-TOP = 145
+TOP = 123
 
 # координата кассы
 
-PAY_DESK = WIDTH - 50
+PAY_DESK = WIDTH - 75
 
 # расстояние между студентами
 DS = 5
@@ -65,7 +65,7 @@ heart = pygame.image.load('heart.png').convert_alpha()
 heart = pygame.transform.scale(heart, (50, 50))
 heart_rect = heart.get_rect()
 # Основной фон
-background = pygame.image.load('background_try.jpg')
+background = pygame.image.load('background.jpg')
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 # Еда
 food1 = pygame.image.load('food1.png').convert_alpha()
@@ -122,7 +122,7 @@ class Student():
         self.v = 5
         self.r = 20
         self.x = -self.r
-        self.y = 100
+        self.y = 78
         self.state = 0
         self.kill = 0 # Переменная, в которую запоминаем, подходил ли охранник или нет
         self.track = 0  # Задаем для студента "случайную" траекторию движения к столу
@@ -198,13 +198,13 @@ class Trajectory():
 
     def move0(self, obj):
         if obj.state == 2:
-            if obj.y < 515 and obj.x > 180:
+            if obj.y < 515 and obj.x > 150:
                 obj.y += self.v
-            if obj.y >= 515 and obj.x >= 180:
+            if obj.y >= 515 and obj.x >= 150:
                 obj.x -= self.v
-            if obj.x < 180 and obj.y > 415:
-                obj.y -= self.v
-            if obj.x < 180 and obj.y <= 415:
+            if obj.x < 150 and obj.y > 415:
+                obj.y = self.v
+            if obj.x < 150 and obj.y <= 415:
                 # Здесь может быть анимация еды:
                 obj.x -= self.v
 
@@ -212,13 +212,14 @@ class Trajectory():
 
     def move1(self, obj):
         if obj.state == 2:
-            if obj.y < 515 and obj.x > 180:
+            if obj.y < 515 and obj.x > 150:
                 obj.y += self.v
-            if obj.y >= 515 and obj.x >= 180:
+            if obj.y >= 515 and obj.x >= 150:
                 obj.x -= self.v
-            if obj.x < 180 and obj.y > 460:
+            if obj.x < 150 and obj.y > 460:
                 obj.y -= self.v
-            if obj.x < 180 and obj.y <= 460:
+                print(obj.x, obj.y)
+            if obj.x < 150 and obj.y <= 460:
                 # Здесь может быть анимация еды:
                 obj.x -= self.v
 
