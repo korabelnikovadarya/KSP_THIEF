@@ -2,6 +2,10 @@
 from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
+import os
+
+print(os.getcwd())
+
 import pygame  # Импортируем библиотеку pygame
 from random import randint, random
 import numpy as np
@@ -19,12 +23,12 @@ red = (255, 0, 0)
 green = (0, 255, 0)
 
 # наборы мест и их активность
-upper_y = 300
-lower_y = 500
-left_x_table = 100
-table_width = 200
-table_gap = 50
-n_tables = 3
+upper_y = 405
+lower_y = 460
+left_x_table = 145
+table_width = 68
+table_gap = 35
+n_tables = 5
 
 x_table_coord = []
 
@@ -32,14 +36,14 @@ upper_active = np.array([1] * n_tables * 2)
 lower_active = np.array([1] * n_tables * 2)
 
 for i in range(n_tables):
-    x_table_coord.append(left_x_table + i * table_width)
-    x_table_coord.append(left_x_table + i * table_width + table_gap)
+    x_table_coord.append(left_x_table + i * (table_width + table_gap))
+    x_table_coord.append(left_x_table + i * (table_width + table_gap) + table_width)
 
 
 # y-координаты коридоров
-coridor1 = 100
-coridor2 = 200
-coridor3 = 550
+coridor1 = 200
+coridor2 = 345
+coridor3 = 510
 
                        
 
@@ -83,7 +87,9 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))  # Задаем размеры
 
 # Количество жизней охранника
 live = 3
-# картинки
+#endregion
+
+#region картинки
 # Доллар при оплате
 dollar = pygame.image.load('project/dollar.png').convert_alpha()
 dollar = pygame.transform.scale(dollar, (40, 50))
@@ -112,12 +118,15 @@ food2_rect = food2.get_rect()
 
 stud_green = pygame.image.load('project/student_green.png')
 stud_green = pygame.transform.scale(stud_green, (50, 50))
+stud_green_rect = stud_green.get_rect()
 
-stud_red = pygame.image.load('project/student_green.png')
+stud_red = pygame.image.load('project/student_red.png')
 stud_red = pygame.transform.scale(stud_red, (50, 50))
+stud_red_rect = stud_red.get_rect()
 
-stud_blue = pygame.image.load('project/student_green.png')
+stud_blue = pygame.image.load('project/student_blue.png')
 stud_blue = pygame.transform.scale(stud_blue, (50, 50))
+stud_blue_rect = stud_blue.get_rect()
 
 #endregion
 
@@ -128,6 +137,11 @@ def decision(probability):
 def draw_heart(screen, x, y):
     heart_rect.center = x, y
     screen.blit(heart, heart_rect)
+
+def draw_seats(screen):
+    for i in x_table_coord:
+        pygame.draw.circle(screen, black, (i, lower_y), 5)
+
 
 class Security():
     def __init__(self, window: pygame.Surface, x, y):
@@ -201,7 +215,7 @@ class Student():
 
     def move(self, obj):
         # учет студента спереди
-        if obj and obj.state == 0 and obj.x - obj.r <= self.x + self.r + DS:
+        if obj and obj.state <= 1 and obj.x - obj.r <= self.x + self.r + DS:
             self.x = obj.x - obj.r - self.r - DS
             return
         if self.state == 0:
@@ -211,19 +225,24 @@ class Student():
             return
         if self.state == 1:
             if self.pay_time <= self.time_goaway:
+                self.direction = 'd'
                 self.y += self.v
                 if self.pay_time == 1:
                     self.state = 2
                     # студент выбирает место 
-                    if decision(1) and any(upper_active):
+                    if decision(0.5) and any(upper_active):
                         idx_free, = np.nonzero(upper_active)
                         idx_table = np.random.choice(idx_free)
-                        self.table = (0, x_table_coord[idx_table]) # 0 - верхний стол, координата места по x
+                        direction = 'r' if idx_table % 2 == 0 else 'l'
+                        self.table = (0, x_table_coord[idx_table], direction) 
+                        # 0 - верхний стол, координата места по x, направление взгляда
                         upper_active[idx_table] = 0
                     else:
                         idx_free, = np.nonzero(lower_active)
                         idx_table = np.random.choice(idx_free)
-                        self.table = (1, x_table_coord[idx_table]) # 1 - нижний стол, координата места по x
+                        direction = 'r' if idx_table % 2 == 0 else 'l'
+                        self.table = (1, x_table_coord[idx_table], direction) 
+                        # 1 - нижний стол, координата места по x, направление взгляда
                         lower_active[idx_table] = 0
                 else:
                     self.pay_time -= 1
@@ -231,15 +250,15 @@ class Student():
                 self.pay_time -= 1
         if self.state == 2:
             if self.table[0] == 0:
-                if self.y < coridor1:
+                if self.y < coridor2:
                     self.direction = 'd'
                     self.y += self.v 
-                    if self.y >= coridor1:
-                        self.y = coridor1
+                    if self.y >= coridor2:
+                        self.y = coridor2
                 elif self.x > self.table[1]:
                     self.direction = 'l'
-                    self.x += self.v
-                    if self.x >= self.table[1]:
+                    self.x -= self.v
+                    if self.x <= self.table[1]:
                         self.x = self.table[1]
                 elif self.y < upper_y:
                     self.direction = 'd'
@@ -247,6 +266,25 @@ class Student():
                     if self.y >= upper_y:
                         self.y = upper_y
                         self.state = 3
+                        self.direction = self.table[2]
+            else:
+                if self.y < coridor3 and self.x > self.table[1]:
+                    self.direction = 'd'
+                    self.y += self.v 
+                    if self.y >= coridor3:
+                        self.y = coridor3
+                elif self.x > self.table[1]:
+                    self.direction = 'l'
+                    self.x -= self.v
+                    if self.x <= self.table[1]:
+                        self.x = self.table[1]
+                elif self.y > lower_y:
+                    self.direction = 'u'
+                    self.y -= self.v 
+                    if self.y <= lower_y:
+                        self.y = lower_y
+                        self.state = 3
+                        self.direction = self.table[2]
 
 
     def pay(self):
@@ -257,9 +295,23 @@ class Student():
 
 
     def draw(self):
-        # Если охранник поймал красного, то этот красный пропадает с игрового поля
-        if not(self.kill == 1 and self.money == 0):
-         pygame.draw.circle(self.window, self.color, (self.x, self.y), self.r)
+        if self.direction == 'r':
+            angle = 0
+        elif self.direction == 'l':
+            angle = 180
+        elif self.direction == 'd':
+            angle = 270
+        elif self.direction == 'u':
+            angle = 90
+        
+        if self.state == 0:
+            pic = pygame.transform.rotate(stud_blue, angle)
+            stud_blue_rect.center = self.x, self.y
+            self.window.blit(pic, stud_blue_rect)
+        else:
+            pic = pygame.transform.rotate(stud_green, angle)
+            stud_green_rect.center = self.x, self.y
+            self.window.blit(pic, stud_green_rect)
 
 
     # Проверяем, находится ли охранник рядом со студентом, который не является вором, если да, то количество жизней охранника уменьшается
@@ -279,41 +331,25 @@ class Thief(Student):
         self.money = 0
         self.pay_time = self.time_goaway
 
-
-    def __init__(self, window: pygame.Surface):
-        self.v = 5
-        self.window = window
-
-    def move0(self, obj):
-        if obj.state == 2:
-            if obj.y < 515 and obj.x > 150:
-                obj.y += self.v
-            if obj.y >= 515 and obj.x >= 150:
-                obj.x -= self.v
-            if obj.x < 150 and obj.y > 415:
-                obj.y = self.v
-            if obj.x < 150 and obj.y <= 415:
-                # Здесь может быть анимация еды:
-                obj.x -= self.v
-
-
-
-    def move1(self, obj):
-        if obj.state == 2:
-            if obj.y < 515 and obj.x > 150:
-                obj.y += self.v
-            if obj.y >= 515 and obj.x >= 150:
-                obj.x -= self.v
-            if obj.x < 150 and obj.y > 460:
-                obj.y -= self.v
-                print(obj.x, obj.y)
-            if obj.x < 150 and obj.y <= 460:
-                # Здесь может быть анимация еды:
-                obj.x -= self.v
-
-
-    def move2(self, obj):
-        pass
+    def draw(self):
+        # Если охранник поймал красного, то этот красный пропадает с игрового поля
+        if not self.kill:
+            if self.direction == 'r':
+                angle = 0
+            elif self.direction == 'l':
+                angle = 180
+            elif self.direction == 'd':
+                angle = 270
+            elif self.direction == 'u':
+                angle = 90
+            if self.state == 0:
+                pic = pygame.transform.rotate(stud_blue, angle)
+                stud_blue_rect.center = self.x, self.y
+                self.window.blit(pic, stud_blue_rect)
+            else:
+                pic = pygame.transform.rotate(stud_red, angle)
+                stud_red_rect.center = self.x, self.y
+                self.window.blit(pic, stud_red_rect)
 
 
 # Начало координат - левый верхний угол
@@ -329,9 +365,11 @@ students = []
 
 # Функция pygame.event.get() возвращает все события, происходящие на игровом поле:
 while gameNow:
-    window.fill(white)
     window.blit(background, (0, 0))
     security.draw_lifes()
+
+    #отладочная печать
+    draw_seats(window)
 
     if security.live < 1:
         gameNow = not (gameNow)
