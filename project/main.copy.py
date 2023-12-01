@@ -113,6 +113,8 @@ class Security():
 
     def draw(self):
         pygame.draw.rect(window, black, [self.x, self.y, self.r, self.r])
+        #print(self.x, self.y)
+
 
 
 class Student():
@@ -171,7 +173,7 @@ class Student():
          # Только один раз для данного студента выбираем траекторию движения
          if self.yesno == 0:
              self.track = randint(0, 1)
-             print(self.track)
+             #print(self.track)
              self.yesno = 1
 
     # Проверяем, находится ли охранник рядом со студентом, который не является вором, если да, то количество жизней охранника уменьшается
@@ -197,6 +199,31 @@ class Trajectory():
         self.window = window
 
     def move0(self, obj):
+
+        if obj.state == 2:
+            obj.x += self.v *(720 - 720) / ((720 - 720)**2 + (345 - 80)**2)**0.5
+            obj.y += self.v * (345 - 80) / ((720 - 720)** 2 + (345 - 80)** 2)** 0.5
+            if obj.y > 345:
+                obj.state = 3
+
+        if obj.state == 3:
+            obj.x += self.v * (120 - 700) / ((120 - 700) ** 2 + (345 - 345) ** 2) ** 0.5
+            obj.y += self.v * (345 - 345) / ((120 - 700) ** 2 + (345 - 345) ** 2) ** 0.5
+            if obj.x < 120:
+                obj.state = 4
+
+        if obj.state == 4:
+            obj.x += self.v * (125 - 120) / ((125 - 120) ** 2 + (405 - 345) ** 2) ** 0.5
+            obj.y += self.v * (405 - 345) / ((125 - 120) ** 2 + (405 - 345) ** 2) ** 0.5
+            if obj.y > 405:
+                obj.state = 5
+
+            #obj.x += self.v * (120- 700) / ((120- 700) ** 2 + (345 - 345) ** 2) ** 0.5
+            #obj.y += self.v * (345 - 345) / ((120- 700) ** 2 + (345 - 345) ** 2) ** 0.5
+
+
+        '''
+        print(obj.x, obj.y)
         if obj.state == 2:
             if obj.y < 515 and obj.x > 150:
                 obj.y += self.v
@@ -207,10 +234,12 @@ class Trajectory():
             if obj.x < 150 and obj.y <= 415:
                 # Здесь может быть анимация еды:
                 obj.x -= self.v
-
+        '''
 
 
     def move1(self, obj):
+        pass
+        '''
         if obj.state == 2:
             if obj.y < 515 and obj.x > 150:
                 obj.y += self.v
@@ -218,11 +247,11 @@ class Trajectory():
                 obj.x -= self.v
             if obj.x < 150 and obj.y > 460:
                 obj.y -= self.v
-                print(obj.x, obj.y)
+
             if obj.x < 150 and obj.y <= 460:
                 # Здесь может быть анимация еды:
                 obj.x -= self.v
-
+        '''
 
     def move2(self, obj):
         pass
@@ -242,6 +271,8 @@ students = []
 
 # Функция pygame.event.get() возвращает все события, происходящие на игровом поле:
 while gameNow:
+    # отслеживаем положение мыши на экране
+
     window.fill(white)
     window.blit(background, (0, 0))
     live = security.live
@@ -280,6 +311,10 @@ while gameNow:
             students.append(Thief(window))
 
     for event in pygame.event.get():
+        # Отслеживаем координаты мыши
+        if event.type == pygame.MOUSEMOTION:
+            xm, ym = event.pos
+            print(xm, ym)
 
         if event.type == pygame.QUIT:  # Если нажат крестик, то окно игры закрывается
             gameNow = False
