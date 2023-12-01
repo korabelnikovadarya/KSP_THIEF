@@ -57,21 +57,21 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))  # Задаем размеры
 live = 3
 # картинки
 # Доллар при оплате
-dollar = pygame.image.load('dollar.png').convert_alpha()
+dollar = pygame.image.load('project/dollar.png').convert_alpha()
 dollar = pygame.transform.scale(dollar, (40, 50))
 dollar_rect = dollar.get_rect()
 # Сердечки-жизни охранника
-heart = pygame.image.load('heart.png').convert_alpha()
+heart = pygame.image.load('project/heart.png').convert_alpha()
 heart = pygame.transform.scale(heart, (50, 50))
 heart_rect = heart.get_rect()
 # Основной фон
-background = pygame.image.load('background.jpg')
+background = pygame.image.load('project/background.jpg')
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 # Еда
-food1 = pygame.image.load('food1.png').convert_alpha()
+food1 = pygame.image.load('project/food1.png').convert_alpha()
 food1 = pygame.transform.scale(food1, (40, 50))
 food1_rect = food1.get_rect()
-food2 = pygame.image.load('food2.png').convert_alpha()
+food2 = pygame.image.load('project/food2.png').convert_alpha()
 food2 = pygame.transform.scale(food2, (40, 50))
 food2_rect = food2.get_rect()
 
