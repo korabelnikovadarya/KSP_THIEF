@@ -3,6 +3,15 @@
 <h3 align="center">Projects</h3>
 B02-309.Team
 
+
+Импорт библиотек:
+
+from os import environ
+import pygame  # Импортируем библиотеку pygame
+from random import randint, random
+import time
+
+
 Игра "КСП-вор"
 
 Идея:
