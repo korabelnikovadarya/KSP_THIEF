@@ -7,8 +7,11 @@ B02-309.Team
 Импорт библиотек:
 
 from os import environ
-import pygame  # Импортируем библиотеку pygame
+
+import pygame  
+
 from random import randint, random
+
 import time
 
 
