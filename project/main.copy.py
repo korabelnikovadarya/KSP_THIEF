@@ -194,6 +194,8 @@ class Thief(Student):
         self.pay_time = self.time_goaway
 # Класс с описанием траекторий движения студентов до столов
 class Trajectory():
+    # движение по принципу сложения векторов
+
     def __init__(self, window: pygame.Surface):
         self.v = 5
         self.window = window
@@ -218,40 +220,24 @@ class Trajectory():
             if obj.y > 405:
                 obj.state = 5
 
-            #obj.x += self.v * (120- 700) / ((120- 700) ** 2 + (345 - 345) ** 2) ** 0.5
-            #obj.y += self.v * (345 - 345) / ((120- 700) ** 2 + (345 - 345) ** 2) ** 0.5
-
-
-        '''
-        print(obj.x, obj.y)
-        if obj.state == 2:
-            if obj.y < 515 and obj.x > 150:
-                obj.y += self.v
-            if obj.y >= 515 and obj.x >= 150:
-                obj.x -= self.v
-            if obj.x < 150 and obj.y > 415:
-                obj.y = self.v
-            if obj.x < 150 and obj.y <= 415:
-                # Здесь может быть анимация еды:
-                obj.x -= self.v
-        '''
-
-
     def move1(self, obj):
-        pass
-        '''
         if obj.state == 2:
-            if obj.y < 515 and obj.x > 150:
-                obj.y += self.v
-            if obj.y >= 515 and obj.x >= 150:
-                obj.x -= self.v
-            if obj.x < 150 and obj.y > 460:
-                obj.y -= self.v
+            obj.x += self.v * (720 - 720) / ((720 - 720) ** 2 + (500 - 80) ** 2) ** 0.5
+            obj.y += self.v * (500 - 80) / ((720 - 720) ** 2 + (500 - 80) ** 2) ** 0.5
+            if obj.y > 510:
+                obj.state = 3
 
-            if obj.x < 150 and obj.y <= 460:
-                # Здесь может быть анимация еды:
-                obj.x -= self.v
-        '''
+        if obj.state == 3:
+            obj.x += self.v * (125 - 700) / ((125 - 700) ** 2 + (510 - 500) ** 2) ** 0.5
+            obj.y += self.v * (510 - 500) / ((125 - 700) ** 2 + (510 - 500) ** 2) ** 0.5
+            if obj.x < 125:
+                obj.state = 4
+
+        if obj.state == 4:
+            obj.x += self.v * (125 - 125) / ((125 - 120) ** 2 + (445 - 510) ** 2) ** 0.5
+            obj.y += self.v * (445 - 510) / ((125 - 120) ** 2 + (445 - 510) ** 2) ** 0.5
+            if obj.y < 445:
+                obj.state = 5
 
     def move2(self, obj):
         pass
