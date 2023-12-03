@@ -293,6 +293,8 @@ class Student():
             dollar_rect.center = self.x, self.y - (pay_time - self.pay_time)
             self.window.blit(dollar, dollar_rect)
 
+    def eat(self):
+        pass
 
     def draw(self):
         if self.direction == 'r':
@@ -351,8 +353,6 @@ class Thief(Student):
                 stud_red_rect.center = self.x, self.y
                 self.window.blit(pic, stud_red_rect)
 
-
-# Начало координат - левый верхний угол
 
 clock = pygame.time.Clock()  # Перменнная для подсчета времени
 
