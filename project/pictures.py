@@ -41,7 +41,7 @@ stud_red = pygame.image.load('project/student_red.png')
 stud_red = pygame.transform.scale(stud_red, (50, 50))
 stud_red_rect = stud_red.get_rect()
 
-stud_blue = pygame.image.load('project/student_blue.png')
+stud_blue = pygame.image.load('project/blue_man.png')
 stud_blue = pygame.transform.scale(stud_blue, (50, 50))
 stud_blue_rect = stud_blue.get_rect()
 

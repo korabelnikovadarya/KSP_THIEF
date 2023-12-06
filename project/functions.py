@@ -26,7 +26,7 @@ def draw_score(window, score, record, new_record, x, y, width, height):
         window.blit(img, (x - img.get_width() / 2, y - img.get_height() / 2 - height / 3))
 
         font = pygame.font.SysFont(None, int(height / 3))
-        img = font.render(str(score), True, black)
+        img = font.render(str(record), True, black)
         window.blit(img, (x - img.get_width() / 2, y - img.get_height() / 2))
     else:
         font = pygame.font.SysFont(None, int(height / 5))

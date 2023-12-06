@@ -38,12 +38,12 @@ pygame.display.update()
 pygame.display.set_caption("KSP_thief")  
 # Добавляем название игры в левом верхнем углу игрового окна
 
-gameNow = 'start' 
+gameNow = 1
 # Переменная, чтобы по ее значению понимать, какая часть игры на экране
-# start -  начальный экран
-# game - игра идет
-# rules - правила
-# lose - экран проигрыша
+# 1 - start -  начальный экран
+# 2 - game - игра идет
+# 3 - rules - правила
+# 4 - lose - экран проигрыша
 # 0 - завершение игры
 
 security = Security(window, x1, y1)
@@ -59,7 +59,8 @@ back_button = Button('К началу', window, 400, 500, d_blue, l_blue)
 
 # Функция pygame.event.get() возвращает все события, происходящие на игровом поле:
 while gameNow:
-    if gameNow == 'game':
+    if gameNow == 2:
+
         #region отрисовка экрана
         window.blit(background, (0, 0))
         security.draw_lifes()
@@ -104,20 +105,19 @@ while gameNow:
                 students[i].move(students[i - 1])
         
         if security.live < 1:
-            gameNow = 'lose'
+            gameNow = 4
+            background.set_alpha(100)
             if SCORE > RECORD:
                 RECORD = SCORE
                 new_record = True
             else:
                 new_record = False
-            SCORE = 0
             play_button.x, play_button.y = (200, 150)
             rules_button.x, rules_button.y = (200, 300) 
             exit_button.x, exit_button.y = (200, 450)
 
         
-    elif gameNow == 'lose':
-
+    elif gameNow == 4:
         window.fill(white)
         background.set_alpha(100)
         window.blit(background, (0, 0))
@@ -136,23 +136,23 @@ while gameNow:
                 gameNow = 0
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.push():
-                    gameNow = 'game'
+                    gameNow = 2
+                    background.set_alpha(255)
+                    SCORE = 0
                     security = Security(window, x1, y1)
                     students = []
                     play_button.not_active()
                 if exit_button.push():
                     gameNow = 0
                 if rules_button.push():
-                    gameNow = 'rules'
+                    gameNow = 3
                     rules_button.not_active()
             elif event.type == pygame.MOUSEMOTION:
                 play_button.activate(event)
                 rules_button.activate(event)
                 exit_button.activate(event)
-    elif gameNow == 'start':
-
+    elif gameNow == 1:
         window.fill(white)
-        background.set_alpha(100)
         window.blit(background, (0, 0))
 
         window.blit(ksp, ksp_rect)
@@ -169,20 +169,22 @@ while gameNow:
                 gameNow = 0
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.push():
-                    gameNow = 'game'
+                    gameNow = 2
+                    background.set_alpha(255)
                     security = Security(window, x1, y1)
                     students = []
                     play_button.not_active()
                 if exit_button.push():
                     gameNow = 0
                 if rules_button.push():
-                    gameNow = 'rules'
+                    gameNow = 3
                     rules_button.not_active()
             elif event.type == pygame.MOUSEMOTION:
                 play_button.activate(event)
                 rules_button.activate(event)
                 exit_button.activate(event)
-    elif gameNow == 'rules':
+    elif gameNow == 3:
+
         window.fill(white)
         background.set_alpha(100)
         window.blit(background, (0, 0))
@@ -196,7 +198,7 @@ while gameNow:
                 gameNow = 0
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.push():
-                    gameNow = 'start'
+                    gameNow = 1
                     play_button.x, play_button.y = (400, 450)
                     rules_button.x, rules_button.y = (150, 450) 
                     exit_button.x, exit_button.y = (650, 450)
