@@ -1,7 +1,7 @@
 import numpy as np
 
 #константы
-FPS = 30  # Частота обновления кадров (30 к/с)
+FPS = 30 # Частота обновления кадров (30 к/с)
 
 # Описываем цвета RGB-схемы
 white = (255, 255, 255)
@@ -23,6 +23,19 @@ grey = (129, 129, 129)
 
 """ наборы мест и их активность """
 
+
+top_y_table = 384
+tables_left_coords = [104, 212, 314, 416, 518, 620]
+
+second_row_x = 105
+second_row_y = 570
+table_small_height = 30
+second_row_long = 695
+
+table_rect_width = 58
+table_height = 103
+
+
 #верхние и нижние места
 upper_y = 405
 lower_y = 460
@@ -39,7 +52,9 @@ table_gap = 35
 n_tables = 5
 
 #координаты мест
+#
 x_table_coord = []
+#
 
 #активность верзних и нижних мест
 # 1 - место свободно

@@ -80,7 +80,6 @@ class Student():
                     # если стол не выбран, то чел просто стоит
                     pass
         if self.state == 2:
-            print(1)
             if self.time_goaway == 1:
                 self.state = 3
             else:

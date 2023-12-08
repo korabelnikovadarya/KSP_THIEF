@@ -2,8 +2,11 @@
 from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
-import os
+from copy import copy
+from typing import Tuple
 
+import os
+os.chdir('C:\\Users\korab\Informatic.Team')
 print(os.getcwd())
 
 import pygame  
@@ -17,7 +20,7 @@ from students import *
 from functions import *
 from security import *
 from buttons import *
-
+#from barriers import *
 
 # Начало отсчета времени
 start = time.time()
@@ -38,6 +41,7 @@ pygame.display.update()
 pygame.display.set_caption("KSP_thief")  
 # Добавляем название игры в левом верхнем углу игрового окна
 
+
 gameNow = 1
 # Переменная, чтобы по ее значению понимать, какая часть игры на экране
 # 1 - start -  начальный экран
@@ -46,27 +50,45 @@ gameNow = 1
 # 4 - lose - экран проигрыша
 # 0 - завершение игры
 
-security = Security(window, x1, y1)
-students = []
-SCORE = 0
-RECORD = -1
-new_record = False # поставил ли игрок новый рекорд в раунде
-
 #кнопки
 play_button = Button('Играть', window, 400, 450, d_green, l_green)
 rules_button = Button('Правила', window, 150, 450, d_blue, l_blue)
 exit_button = Button('Выход', window, 650, 450, d_red, l_red)
 back_button = Button('К началу', window, 400, 500, d_blue, l_blue)
 
+#
+barriers = [
+    Barrier(155, 214, 84, 83, pygame.image.load('зеленое.png')),
+    Barrier(327, 214, 85, 85, pygame.image.load('красное.png')),
+    Barrier(498, 214, 84, 83, pygame.image.load('синевое.png')),
+    Barrier(744, 219, 50, 152)]  # колонны и крайний левый стол
+
+for x in tables_left_coords:
+    barriers.append(Barrier(x, top_y_table, table_rect_width, table_height))
+barriers.append(Barrier(second_row_x, second_row_y, second_row_long, table_small_height))
+#
+
+
+security = Security(window, x1, y1)
+students = []
+SCORE = 0
+RECORD = -1
+new_record = False # поставил ли игрок новый рекорд в раунде
+
+
 # Функция pygame.event.get() возвращает все события, происходящие на игровом поле:
 while gameNow:
+    window.blit(background, (0, 0))
+    security.draw_lifes()
+    # отладочная печать
+    draw_seats(window)
+
     if gameNow == 2:
 
         #region отрисовка экрана
         window.blit(background, (0, 0))
         security.draw_lifes()
-
-        #отладочная печать
+        # отладочная печать
         draw_seats(window)
 
         security.draw()
@@ -94,9 +116,24 @@ while gameNow:
                 # Если нажат крестик, то окно игры закрывается
                 gameNow = 0
 
-        # Движение охранника
+            # Движение охранника
+
+
         keys = pygame.key.get_pressed()
-        security.move(keys)
+        new_security = security.move(keys)
+            #
+
+        pygame.display.update()
+        collided = False
+
+        for barrier in barriers:
+            collided = barrier.collide(new_security)
+            pygame.display.update()
+            if collided:
+                break
+
+        if not collided:
+            security = new_security
 
         for i in range(len(students)):
             if i == 0:
