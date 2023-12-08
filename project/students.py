@@ -22,6 +22,8 @@ class Student():
         # 1 - расплачивается
         # 2 - идет к столу
         # 3 - ест
+        # 4 - уходит
+        # 5 - словлен охранником
 
         self.kill = 0 # Переменная, в которую запоминаем, подходил ли охранник или нет
 
@@ -78,6 +80,7 @@ class Student():
                 self.pay_time -= 1
         if self.state == 2:
             if self.table[0] == 0:
+                # движение к верхнему столу
                 if self.y < coridor2:
                     self.direction = 'd'
                     self.y += self.v 
@@ -96,6 +99,7 @@ class Student():
                         self.state = 3
                         self.direction = self.table[2]
             else:
+                # движение к верхнему столу
                 if self.y < coridor3 and self.x > self.table[1]:
                     self.direction = 'd'
                     self.y += self.v 
@@ -113,7 +117,15 @@ class Student():
                         self.y = lower_y
                         self.state = 3
                         self.direction = self.table[2]
-
+        if self.state == 3:
+            # студент ест
+            pass
+        if self.state == 4:
+            # студент уходит
+            pass
+        if self.state == 5:
+            # студента словили
+            pass
 
     def pay(self):
         if self.state == 1:
@@ -158,7 +170,7 @@ class Thief(Student):
         super().__init__(window)
         self.color = red
         self.money = 0
-        
+
         self.pay_time = self.time_goaway
 
     def draw(self):
