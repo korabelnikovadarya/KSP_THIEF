@@ -60,11 +60,10 @@ back_button = Button('К началу', window, 400, 500, d_blue, l_blue)
 barriers = [
     Barrier(155, 214, 84, 83, pygame.image.load('зеленое.png')),
     Barrier(327, 214, 85, 85, pygame.image.load('красное.png')),
-    Barrier(498, 214, 84, 83, pygame.image.load('синевое.png')),
-    Barrier(744, 219, 50, 152)]  # колонны и крайний левый стол
-
+    Barrier(498, 214, 82, 83, pygame.image.load('синевое.png'))]  # колонны
+#  , Barrier(50, 393, 50, 152)
 for x in tables_left_coords:
-    barriers.append(Barrier(x, top_y_table, table_rect_width, table_height))
+    barriers.append(Barrier(x, top_y_table, table_rect_width - 0.05 * table_rect_width, table_height))
 barriers.append(Barrier(second_row_x, second_row_y, second_row_long, table_small_height))
 #
 
@@ -84,6 +83,11 @@ while gameNow:
     draw_seats(window)
 
     if gameNow == 2:
+        for event in pygame.event.get():
+            # Отслеживаем координаты мыши
+            if event.type == pygame.MOUSEMOTION:
+                xm, ym = event.pos
+                print(xm, ym)
 
         #region отрисовка экрана
         window.blit(background, (0, 0))
