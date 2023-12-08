@@ -20,21 +20,37 @@ yellow = (246, 230, 107)
 grey = (129, 129, 129)
 
 
-# наборы мест и их активность
+
+""" наборы мест и их активность """
+
+#верхние и нижние места
 upper_y = 405
 lower_y = 460
+
 left_x_table = 145
+
+#расстояние между стульями по обе стороны от одного стола
 table_width = 68
+
+#расстояние между стульями в проходе
 table_gap = 35
+
+#количество столов
 n_tables = 5
 
+#координаты мест
 x_table_coord = []
 
+#активность верзних и нижних мест
+# 1 - место свободно
+# 0 - место занято
 upper_active = np.array([1] * n_tables * 2)
 lower_active = np.array([1] * n_tables * 2)
 
 for i in range(n_tables):
+    # левое место у i стола
     x_table_coord.append(left_x_table + i * (table_width + table_gap))
+    # правое место у i стола
     x_table_coord.append(left_x_table + i * (table_width + table_gap) + table_width)
 
 

@@ -52,6 +52,7 @@ SCORE = 0
 RECORD = -1
 new_record = False # поставил ли игрок новый рекорд в раунде
 
+#кнопки
 play_button = Button('Играть', window, 400, 450, d_green, l_green)
 rules_button = Button('Правила', window, 150, 450, d_blue, l_blue)
 exit_button = Button('Выход', window, 650, 450, d_red, l_red)
@@ -122,10 +123,12 @@ while gameNow:
         background.set_alpha(100)
         window.blit(background, (0, 0))
 
+        #рисую кнопки
         play_button.draw()
         rules_button.draw()
         exit_button.draw()
 
+        #рисую счет
         draw_score(window, SCORE, RECORD, new_record, 600, 300, 300, 400)
 
         pygame.display.update()
@@ -135,6 +138,7 @@ while gameNow:
             if event.type == pygame.QUIT:
                 gameNow = 0
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                #проверка нажаты ли кнопки
                 if play_button.push():
                     gameNow = 2
                     background.set_alpha(255)
@@ -148,6 +152,7 @@ while gameNow:
                     gameNow = 3
                     rules_button.not_active()
             elif event.type == pygame.MOUSEMOTION:
+                #проверяю активацию кнопок
                 play_button.activate(event)
                 rules_button.activate(event)
                 exit_button.activate(event)

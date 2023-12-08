@@ -57,6 +57,9 @@ class Button():
             self.growth = 1
     
     def push(self):
+        """
+        если мышка находится на кнопке, то она активна, если в этот момент MOUSEBUTTONDOWN, то кнопка нажата
+        """
         if self.active:
             return True
         else:

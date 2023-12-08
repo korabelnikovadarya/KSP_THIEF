@@ -49,13 +49,23 @@ class Student():
                     self.state = 2
                     # студент выбирает место 
                     if decision(0.5) and any(upper_active):
+                        # c вероятносью 0.5 выбираем верхний ряд
+
+                        # находим все индексы свободных мест сверху
                         idx_free, = np.nonzero(upper_active)
+                        # из свободных выбираем одно
                         idx_table = np.random.choice(idx_free)
+
+                        # направление взгляда когда будет сидеть за столом
                         direction = 'r' if idx_table % 2 == 0 else 'l'
+
                         self.table = (0, x_table_coord[idx_table], direction) 
                         # 0 - верхний стол, координата места по x, направление взгляда
+
+                        # делаем место неактивным
                         upper_active[idx_table] = 0
                     else:
+                        # c вероятносью 0.5 выбираем нижний ряд
                         idx_free, = np.nonzero(lower_active)
                         idx_table = np.random.choice(idx_free)
                         direction = 'r' if idx_table % 2 == 0 else 'l'
@@ -148,6 +158,7 @@ class Thief(Student):
         super().__init__(window)
         self.color = red
         self.money = 0
+        
         self.pay_time = self.time_goaway
 
     def draw(self):
