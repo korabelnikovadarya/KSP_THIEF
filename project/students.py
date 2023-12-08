@@ -2,14 +2,14 @@ from pictures import *
 from constants import *
 import pygame
 from functions import *
-
+from math import sin, cos, pi
 
 class Student():
     def __init__(self, window: pygame.Surface):
         self.window = window
         self.money = 1
-        #self.v = 5
-        self.v = 0.2
+        self.v = 5
+        #self.v = 0.2
         self.r = 20
         self.x = -self.r
         self.y = 78
@@ -32,6 +32,7 @@ class Student():
         self.color = green
 
         # время оплаты + время отхода от кассы
+
         self.time_goaway = (2 * self.r + DS) // self.v
         self.pay_time = pay_time + self.time_goaway
 
@@ -49,6 +50,7 @@ class Student():
             if self.pay_time > 0:
                 self.pay_time -= 1
             else:
+
                 # студент выбирает место 
                 if decision(0.5) and any(upper_active):
                     # c вероятносью 0.5 выбираем верхний ряд
@@ -88,6 +90,15 @@ class Student():
                 self.y += self.v  
                 self.time_goaway -= 1
         if self.state == 3:
+
+            if (self.table[1] == self.x and self.y == upper_y) or (self.table[1] == self.x and self.y == lower_y):
+                self.pay_time = 60
+                self.state = 4
+                pygame.draw.circle(window, black, (self.x, self.y), 8)
+                #pygame.display.update()
+                print(self.pay_time, self.state)
+
+
             if self.table[0] == 0:
                 # движение к верхнему столу
                 if self.y < coridor2:
@@ -107,6 +118,8 @@ class Student():
                         self.y = upper_y
                         self.state = 3
                         self.direction = self.table[2]
+
+
             else:
                 # движение к верхнему столу
                 if self.y < coridor3 and self.x > self.table[1]:
@@ -126,9 +139,7 @@ class Student():
                         self.y = lower_y
                         self.state = 3
                         self.direction = self.table[2]
-        if self.state == 4:
-            # студент ест
-            pass
+# self.state = 4 - кушает
         if self.state == 5:
             # студент уходит
             pass
@@ -143,7 +154,16 @@ class Student():
             self.window.blit(dollar, dollar_rect)
 
     def eat(self):
-        pass
+        # часы, когда кушает
+        if self.state == 4:
+            if self.pay_time > 0:
+                self.pay_time -= 1
+                pygame.draw.circle(self.window, black, (self.x + 2, self.y), 15)
+                pygame.draw.line(self.window, white, [self.x + 2, self.y],
+                                 [self.x + 15 * cos (2 * pi / 60 * (60 - self.pay_time)), self.y - 15 * sin (2 * pi / 60 * (60 - self.pay_time))], 3)
+            else:
+                self.state = 5
+
 
     def draw(self):
         if self.direction == 'r':

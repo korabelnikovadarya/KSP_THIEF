@@ -66,8 +66,10 @@ barriers = [
 # координата по ОХ левого края стола, ширина стола, высота стола
 for x in tables_left_coords:
     barriers.append(Barrier(x, top_y_table, 0.8 * table_rect_width, table_height))
-barriers.append(Barrier(second_row_x, second_row_y, second_row_long, table_small_height))
-#
+for x in tables_left_coords_2:
+    barriers.append(Barrier(x, 540, 0.8 * table_rect_width, table_small_height))
+#barriers.append(Barrier(second_row_x, second_row_y, second_row_long, table_small_height))
+
 
 
 security = Security(window, x1, y1)
@@ -88,8 +90,9 @@ while gameNow:
         for event in pygame.event.get():
             # Отслеживаем координаты мыши
             if event.type == pygame.MOUSEMOTION:
-                xm, ym = event.pos
-                print(xm, ym)
+                pass
+                #xm, ym = event.pos
+                #print(xm, ym)
 
         #region отрисовка экрана
         window.blit(background, (0, 0))
@@ -102,6 +105,7 @@ while gameNow:
         for s in students:
             s.draw()
             s.pay()
+            s.eat()
             if s.hittest(security):
                 SCORE += 1
 

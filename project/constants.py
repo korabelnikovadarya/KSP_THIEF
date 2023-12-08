@@ -28,18 +28,19 @@ top_y_table = 392
 
 second_row_x = 105
 second_row_y = 570
-table_small_height = 30
+table_small_height = 25
 second_row_long = 695
 
-table_rect_width = 56 # Ширина стола
-table_height = 92 # Высота стола
+
+table_rect_width = 43 # Ширина стола
+table_height = 80 # Высота стола
 
 
 #верхние и нижние места
 upper_y = 405
 lower_y = 460
 
-left_x_table = 145 # Левый край левого стола по ОХ
+left_x_table = 160 # Левый край левого стола по ОХ
 
 #расстояние между стульями по обе стороны от одного стола
 table_width = 68
@@ -50,15 +51,14 @@ table_gap = 35
 #количество столов
 n_tables = 5
 
-#координаты мест
-# + table_rect_width
 x_table_coord = []
 # Координаты для столов (чтобы охранник обходил эти столы)
-
 # дальше этого вправо не идет:
-tables_left_coords = [159 , 263, 366,
-                      467, 566]
-#tables_left_coords = [left_x_table, left_x_table+ table_gap, 416, 518, 620]
+tables_left_coords = [left_x_table + i * (table_width + table_gap) for i in range(5)]
+
+# Координаты для столов нижнего ряда
+tables_left_coords_2 = [second_row_x + i * (table_width + table_gap) for i in range(7)]
+
 
 #активность верзних и нижних мест
 # 1 - место свободно
