@@ -24,7 +24,7 @@ grey = (129, 129, 129)
 """ наборы мест и их активность """
 
 
-top_y_table = 384
+top_y_table = 392
 
 second_row_x = 105
 second_row_y = 570
@@ -32,7 +32,7 @@ table_small_height = 30
 second_row_long = 695
 
 table_rect_width = 56 # Ширина стола
-table_height = 100 # Высота стола
+table_height = 92 # Высота стола
 
 
 #верхние и нижние места
@@ -51,10 +51,13 @@ table_gap = 35
 n_tables = 5
 
 #координаты мест
-#
+# + table_rect_width
 x_table_coord = []
 # Координаты для столов (чтобы охранник обходил эти столы)
-tables_left_coords = [left_x_table + i * table_gap for i in range(5)]
+
+# дальше этого вправо не идет:
+tables_left_coords = [159 , 263, 366,
+                      467, 566]
 #tables_left_coords = [left_x_table, left_x_table+ table_gap, 416, 518, 620]
 
 #активность верзних и нижних мест

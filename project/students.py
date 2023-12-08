@@ -8,7 +8,8 @@ class Student():
     def __init__(self, window: pygame.Surface):
         self.window = window
         self.money = 1
-        self.v = 5
+        #self.v = 5
+        self.v = 0.2
         self.r = 20
         self.x = -self.r
         self.y = 78

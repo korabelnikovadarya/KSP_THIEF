@@ -10,9 +10,10 @@ def draw_heart(screen, x, y):
     heart_rect.center = x, y
     screen.blit(heart, heart_rect)
 
-def draw_seats(screen):
-    for i in x_table_coord:
-        pygame.draw.circle(screen, black, (i, lower_y), 5)
+def draw_seats(screen): # Черные точки-ориентиры для столов
+    pass
+    #for i in x_table_coord:
+        #pygame.draw.circle(screen, black, (i, lower_y), 5)
 
 def draw_score(window, score, record, new_record, x, y, width, height):
     d_coord = 15
