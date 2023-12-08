@@ -9,12 +9,12 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))  # Задаем размеры
 
 # Доллар при оплате
 # dollar = pygame.image.load('project/dollar.png').convert_alpha()
-dollar = pygame.image.load('dollar.png').convert_alpha()
+dollar = pygame.image.load('project/dollar.png').convert_alpha()
 dollar = pygame.transform.scale(dollar, (40, 50))
 dollar_rect = dollar.get_rect()
 
 # Сердечки-жизни охранника
-heart = pygame.image.load('heart.png').convert_alpha()
+heart = pygame.image.load('project/heart.png').convert_alpha()
 heart_size = 50
 heart = pygame.transform.scale(heart, (heart_size, heart_size))
 heart_rect = heart.get_rect()

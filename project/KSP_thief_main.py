@@ -106,6 +106,7 @@ while gameNow:
             s.draw()
             s.pay()
             s.eat()
+
             if s.hittest(security):
                 SCORE += 1
 

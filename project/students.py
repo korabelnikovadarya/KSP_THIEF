@@ -95,7 +95,7 @@ class Student():
                 self.pay_time = 60
                 self.state = 4
                 pygame.draw.circle(window, black, (self.x, self.y), 8)
-                #pygame.display.update()
+
                 print(self.pay_time, self.state)
 
 
@@ -121,7 +121,7 @@ class Student():
 
 
             else:
-                # движение к верхнему столу
+                # движение к нижнему столу
                 if self.y < coridor3 and self.x > self.table[1]:
                     self.direction = 'd'
                     self.y += self.v 
@@ -142,7 +142,41 @@ class Student():
 # self.state = 4 - кушает
         if self.state == 5:
             # студент уходит
-            pass
+
+            if self.table[0] == 0:
+                # движение на выход от верхнего стола
+                if self.y >= coridor2:
+                    self.direction = 'u'
+                    self.y -= self.v
+                    if self.y <= coridor2:
+                        self.y = coridor2 - 1
+                elif self.x > -50:
+                    self.direction = 'l'
+                    self.x -= self.v
+
+            else:
+                # движение на выход от нижнего стола
+                if self.y < coridor3:
+                    self.direction = 'd'
+                    self.y += self.v
+                    if self.y >= coridor3:
+                        self.y = coridor3
+                elif self.x > -50:
+                    self.direction = 'l'
+                    self.x -= self.v
+                    '''
+                    if self.x <= self.table[1]:
+                        self.x = self.table[1]
+                elif self.y > lower_y:
+                    self.direction = 'u'
+                    self.y -= self.v
+                    if self.y <= lower_y:
+                        self.y = lower_y
+                        self.state = 3
+                        self.direction = self.table[2]
+                        '''
+
+
         if self.state == 6:
             # студента словили
             pass
@@ -158,9 +192,9 @@ class Student():
         if self.state == 4:
             if self.pay_time > 0:
                 self.pay_time -= 1
-                pygame.draw.circle(self.window, black, (self.x + 2, self.y), 15)
+                pygame.draw.circle(self.window, black, (self.x + 2, self.y), 17)
                 pygame.draw.line(self.window, white, [self.x + 2, self.y],
-                                 [self.x + 15 * cos (2 * pi / 60 * (60 - self.pay_time)), self.y - 15 * sin (2 * pi / 60 * (60 - self.pay_time))], 3)
+                                 [self.x - 15 * sin(pi + 2 * pi / 60 * (60 - self.pay_time)), self.y + 15 * cos(pi + 2 * pi / 60 * (60 - self.pay_time))], 3)
             else:
                 self.state = 5
 
