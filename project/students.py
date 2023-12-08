@@ -20,10 +20,11 @@ class Student():
         # что делает студент
         # 0 - идет вдоль ленты
         # 1 - расплачивается
-        # 2 - идет к столу
-        # 3 - ест
-        # 4 - уходит
-        # 5 - словлен охранником
+        # 2 - отходит от кассы
+        # 3 - идет к столу
+        # 4 - ест
+        # 5 - уходит
+        # 6 - словлен охранником
 
         self.kill = 0 # Переменная, в которую запоминаем, подходил ли охранник или нет
 
@@ -35,7 +36,7 @@ class Student():
 
     def move(self, obj):
         # учет студента спереди
-        if obj and obj.state <= 1 and obj.x - obj.r <= self.x + self.r + DS:
+        if obj and obj.state <= 2 and obj.x - obj.r <= self.x + self.r + DS:
             self.x = obj.x - obj.r - self.r - DS
             return
         if self.state == 0:
@@ -44,41 +45,49 @@ class Student():
                 self.state = 1
             return
         if self.state == 1:
-            if self.pay_time <= self.time_goaway:
-                self.direction = 'd'
-                self.y += self.v
-                if self.pay_time == 1:
-                    self.state = 2
-                    # студент выбирает место 
-                    if decision(0.5) and any(upper_active):
-                        # c вероятносью 0.5 выбираем верхний ряд
-
-                        # находим все индексы свободных мест сверху
-                        idx_free, = np.nonzero(upper_active)
-                        # из свободных выбираем одно
-                        idx_table = np.random.choice(idx_free)
-
-                        # направление взгляда когда будет сидеть за столом
-                        direction = 'r' if idx_table % 2 == 0 else 'l'
-
-                        self.table = (0, x_table_coord[idx_table], direction) 
-                        # 0 - верхний стол, координата места по x, направление взгляда
-
-                        # делаем место неактивным
-                        upper_active[idx_table] = 0
-                    else:
-                        # c вероятносью 0.5 выбираем нижний ряд
-                        idx_free, = np.nonzero(lower_active)
-                        idx_table = np.random.choice(idx_free)
-                        direction = 'r' if idx_table % 2 == 0 else 'l'
-                        self.table = (1, x_table_coord[idx_table], direction) 
-                        # 1 - нижний стол, координата места по x, направление взгляда
-                        lower_active[idx_table] = 0
-                else:
-                    self.pay_time -= 1
-            else:
+            if self.pay_time > 0:
                 self.pay_time -= 1
+            else:
+                # студент выбирает место 
+                if decision(0.5) and any(upper_active):
+                    # c вероятносью 0.5 выбираем верхний ряд
+                    self.state = 2
+
+                    # находим все индексы свободных мест сверху
+                    idx_free, = np.nonzero(upper_active)
+                    # из свободных выбираем одно
+                    idx_table = np.random.choice(idx_free)
+
+                    # направление взгляда когда будет сидеть за столом
+                    direction = 'r' if idx_table % 2 == 0 else 'l'
+
+                    self.table = (0, x_table_coord[idx_table], direction) 
+                    # 0 - верхний стол, координата места по x, направление взгляда
+
+                    # делаем место неактивным
+                    upper_active[idx_table] = 0
+                elif any(lower_active):
+                    # c вероятносью 0.5 выбираем нижний ряд
+                    self.state = 2
+
+                    idx_free, = np.nonzero(lower_active)
+                    idx_table = np.random.choice(idx_free)
+                    direction = 'r' if idx_table % 2 == 0 else 'l'
+                    self.table = (1, x_table_coord[idx_table], direction) 
+                    # 1 - нижний стол, координата места по x, направление взгляда
+                    lower_active[idx_table] = 0
+                else:
+                    # если стол не выбран, то чел просто стоит
+                    pass
         if self.state == 2:
+            print(1)
+            if self.time_goaway == 1:
+                self.state = 3
+            else:
+                self.direction = 'd'
+                self.y += self.v  
+                self.time_goaway -= 1
+        if self.state == 3:
             if self.table[0] == 0:
                 # движение к верхнему столу
                 if self.y < coridor2:
@@ -117,19 +126,19 @@ class Student():
                         self.y = lower_y
                         self.state = 3
                         self.direction = self.table[2]
-        if self.state == 3:
+        if self.state == 4:
             # студент ест
             pass
-        if self.state == 4:
+        if self.state == 5:
             # студент уходит
             pass
-        if self.state == 5:
+        if self.state == 6:
             # студента словили
             pass
 
     def pay(self):
         if self.state == 1:
-            dollar.set_alpha(255 * (self.pay_time - self.time_goaway) // pay_time)
+            dollar.set_alpha(255 * self.pay_time // pay_time)
             dollar_rect.center = self.x, self.y - (pay_time - self.pay_time)
             self.window.blit(dollar, dollar_rect)
 
@@ -171,7 +180,7 @@ class Thief(Student):
         self.color = red
         self.money = 0
 
-        self.pay_time = self.time_goaway
+        self.pay_time = 0
 
     def draw(self):
         # Если охранник поймал красного, то этот красный пропадает с игрового поля
