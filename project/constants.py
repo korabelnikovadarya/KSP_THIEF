@@ -68,9 +68,9 @@ lower_active = np.array([1] * n_tables * 2)
 
 for i in range(n_tables):
     # левое место у i стола
-    x_table_coord.append(left_x_table + i * (table_width + table_gap))
+    x_table_coord.append(left_x_table - 10  + i * (table_width + table_gap))
     # правое место у i стола
-    x_table_coord.append(left_x_table + i * (table_width + table_gap) + table_width)
+    x_table_coord.append(left_x_table - 15 + i * (table_width + table_gap) + table_width)
 
 
 # y-координаты коридоров

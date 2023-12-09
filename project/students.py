@@ -51,39 +51,40 @@ class Student():
             if self.pay_time > 0:
                 self.pay_time -= 1
             else:
+                if self.state < 2:
 
-                # студент выбирает место 
-                if decision(0.5) and any(upper_active):
-                    # c вероятносью 0.5 выбираем верхний ряд
-                    self.state = 2
+                    # студент выбирает место
+                    if decision(0.5) and any(upper_active):
+                        # c вероятносью 0.5 выбираем верхний ряд
+                        self.state = 2
 
-                    # находим все индексы свободных мест сверху
-                    idx_free, = np.nonzero(upper_active)
-                    # из свободных выбираем одно
-                    idx_table = np.random.choice(idx_free)
-                    self.number_table = idx_table # запоминаем индекс занятого стола, чтобы потом этот стол освободить
-                    # направление взгляда когда будет сидеть за столом
-                    direction = 'r' if idx_table % 2 == 0 else 'l'
+                        # находим все индексы свободных мест сверху
+                        idx_free, = np.nonzero(upper_active)
+                        # из свободных выбираем одно
+                        idx_table = np.random.choice(idx_free)
+                        self.number_table = idx_table # запоминаем индекс занятого стола, чтобы потом этот стол освободить
+                        # направление взгляда когда будет сидеть за столом
+                        direction = 'r' if idx_table % 2 == 0 else 'l'
 
-                    self.table = (0, x_table_coord[idx_table], direction) 
-                    # 0 - верхний стол, координата места по x, направление взгляда
+                        self.table = (0, x_table_coord[idx_table], direction)
+                        # 0 - верхний стол, координата места по x, направление взгляда
 
-                    # делаем место неактивным
-                    upper_active[idx_table] = 0
+                        # делаем место неактивным
+                        upper_active[idx_table] = 0
 
-                elif any(lower_active):
-                    # c вероятносью 0.5 выбираем нижний ряд
-                    self.state = 2
+                    elif any(lower_active):
+                        # c вероятносью 0.5 выбираем нижний ряд
+                        self.state = 2
 
-                    idx_free, = np.nonzero(lower_active)
-                    idx_table = np.random.choice(idx_free)
-                    direction = 'r' if idx_table % 2 == 0 else 'l'
-                    self.table = (1, x_table_coord[idx_table], direction) 
-                    # 1 - нижний стол, координата места по x, направление взгляда
-                    lower_active[idx_table] = 0
-                #else:
-                    # если стол не выбран, то чел просто стоит
-                 #   pass
+                        idx_free, = np.nonzero(lower_active)
+                        idx_table = np.random.choice(idx_free)
+                        direction = 'r' if idx_table % 2 == 0 else 'l'
+                        self.table = (1, x_table_coord[idx_table], direction)
+                        # 1 - нижний стол, координата места по x, направление взгляда
+                        lower_active[idx_table] = 0
+                    #else:
+                        # если стол не выбран, то чел просто стоит
+                     #   pass
         if self.state == 2:
             if self.time_goaway == 1:
                 self.state = 3
