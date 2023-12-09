@@ -81,9 +81,9 @@ class Student():
                     self.table = (1, x_table_coord[idx_table], direction) 
                     # 1 - нижний стол, координата места по x, направление взгляда
                     lower_active[idx_table] = 0
-                else:
+                #else:
                     # если стол не выбран, то чел просто стоит
-                    pass
+                 #   pass
         if self.state == 2:
             if self.time_goaway == 1:
                 self.state = 3
