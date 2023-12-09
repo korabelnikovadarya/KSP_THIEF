@@ -6,7 +6,7 @@ from copy import copy
 from typing import Tuple
 
 import os
-os.chdir('C:\\Users\korab\Informatic.Team')
+#os.chdir('C:\\Users\korab\Informatic.Team')
 print(os.getcwd())
 
 import pygame  

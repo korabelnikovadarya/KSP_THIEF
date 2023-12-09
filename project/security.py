@@ -10,7 +10,7 @@ class Security():
         self.window = window
         self.x = x
         self.y = y
-        self.live = 30
+        self.live = 3
         self.v = 10
         self.r = 35
 

@@ -97,7 +97,7 @@ class Student():
             if (self.table[1] == self.x and self.y == upper_y) or (self.table[1] == self.x and self.y == lower_y):
                 self.pay_time = 60
                 self.state = 4
-                print(self.pay_time, self.state)
+                #print(self.pay_time, self.state)
 
 
             if self.table[0] == 0:
