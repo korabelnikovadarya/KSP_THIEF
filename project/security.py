@@ -51,26 +51,9 @@ class Security():
         """
         отрисовывает количество жизней охраны
         """
-        x = 40
+        x = 600
         y = 550
         for i in range(self.live):
             draw_heart(self.window, x + i * heart_size * 1.5, y)
 
-class Barrier:  # КОЛОННЫ, СТОЛЫ
-    def __init__(self, x, y, width, height, surface=None):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.window = window
-        self.surface = surface
-
-    def draw(self, window):
-        if self.surface is not None:
-            window.blit(self.surface, (self.x, self.y))
-
-    def collide(self, security: Security) -> bool:
-        security_rect = pygame.Rect(security.x, security.y, security.r, security.r)
-        barrier_rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        return pygame.Rect.colliderect(barrier_rect, security_rect)
 

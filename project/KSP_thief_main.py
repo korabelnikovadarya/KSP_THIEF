@@ -20,7 +20,7 @@ from students import *
 from functions import *
 from security import *
 from buttons import *
-#from barriers import *
+from barriers import *
 
 # Начало отсчета времени
 start = time.time()
@@ -98,7 +98,7 @@ while gameNow:
         window.blit(background, (0, 0))
         security.draw_lifes()
         # отладочная печать
-        draw_seats(window)
+        #draw_seats(window)
 
         security.draw()
 
@@ -152,6 +152,9 @@ while gameNow:
         
         if security.live < 1:
             gameNow = 4
+            upper_active = np.array([1] * n_tables * 2)
+            lower_active = np.array([1] * n_tables * 2)
+
             background.set_alpha(100)
             if SCORE > RECORD:
                 RECORD = SCORE
