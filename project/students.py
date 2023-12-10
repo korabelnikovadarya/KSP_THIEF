@@ -11,8 +11,8 @@ class Student():
         self.number_table = 0 # будем запоминать индекс стола, чтобы потом этот стол освобождать
         self.v = 5
         #self.v = 0.2
-        self.r = 20
-        self.x = -self.r
+        self.r = student_r
+        self.x = -2*self.r
         self.y = 78
 
         #направление движения студента для правильной отрисовки
@@ -28,7 +28,8 @@ class Student():
         # 5 - уходит
         # 6 -
 
-        self.kill = 0 # переменная, которая обеспечивает только одну -жизнь при касании зеленого
+        self.touch = 0 #касаются ли охранник и студент
+        self.minus_life = 1 # переменная, которая обеспечивает только одну -жизнь при касании зеленого
 
 
         self.color = green
@@ -39,7 +40,7 @@ class Student():
         self.pay_time = pay_time + self.time_goaway
         self.eat_time = eat_time
 
-    def move(self, obj):
+    def move(self, obj, security):
         # учет студента спереди
         if obj and obj.state <= 2 and obj.x - obj.r <= self.x + self.r + DS:
             self.x = obj.x - obj.r - self.r - DS
@@ -87,12 +88,25 @@ class Student():
                         # если стол не выбран, то чел просто стоит
                      #   pass
         if self.state == 2:
-            if self.time_goaway == 1:
-                self.state = 3
-            else:
+            if self.time_goaway > 1:
                 self.direction = 'd'
                 self.y += self.v  
-                self.time_goaway -= 1
+                # если студент воткнулся в охранника, то он стоит на месте
+                if char_collide(self, security) and security.y < self.y + self.r:
+                    self.y = security.y - self.r
+                    self.touch = 1
+                else:
+                    self.touch = 0
+                    self.time_goaway -= 1
+            elif self.time_goaway == 1:
+                self.y += self.v
+                # если студент воткнулся в охранника, то он стоит на месте
+                if char_collide(self, security) and security.y < self.y + self.r:
+                    self.y = security.y - self.r
+                    self.touch = 1
+                else:
+                    self.touch = 0
+                    self.state = 3
         if self.state == 3:
 
             if self.table[0] == 0:
@@ -100,16 +114,33 @@ class Student():
                 if self.y < coridor2:
                     self.direction = 'd'
                     self.y += self.v 
+                    if char_collide(self, security) and security.y < self.y + self.r:
+                        self.y = security.y - self.r
+                        self.touch = 1
+                    else:
+                        self.touch = 0
                     if self.y >= coridor2:
                         self.y = coridor2
+
                 elif self.x > self.table[1]:
                     self.direction = 'l'
                     self.x -= self.v
+                    if char_collide(self, security) and security.x + security.r > self.x - self.r:
+                        self.x = security.x + security.r + self.r
+                        self.touch = 1
+                    else:
+                        self.touch = 0
                     if self.x <= self.table[1]:
                         self.x = self.table[1]
+
                 elif self.y < upper_y:
                     self.direction = 'd'
                     self.y += self.v 
+                    if char_collide(self, security) and security.y < self.y + self.r:
+                        self.y = security.y - self.r
+                        self.touch = 1
+                    else:
+                        self.touch = 0
                     if self.y >= upper_y:
                         self.y = upper_y
                         self.state = 4
@@ -121,24 +152,43 @@ class Student():
                 if self.y < coridor3 and self.x > self.table[1]:
                     self.direction = 'd'
                     self.y += self.v 
+                    if char_collide(self, security) and security.y < self.y + self.r:
+                        self.y = security.y - self.r
+                        self.touch = 1
+                    else:
+                        self.touch = 0
                     if self.y >= coridor3:
                         self.y = coridor3
+                    
                 elif self.x > self.table[1]:
                     self.direction = 'l'
                     self.x -= self.v
+                    if char_collide(self, security) and security.x + security.r > self.x - self.r:
+                        self.x = security.x + security.r + self.r
+                        self.touch = 1
+                    else:
+                        self.touch = 0
                     if self.x <= self.table[1]:
                         self.x = self.table[1]
+
                 elif self.y > lower_y:
                     self.direction = 'u'
                     self.y -= self.v 
+                    if char_collide(self, security) and security.y + security.r > self.y - self.r:
+                        self.y = security.y + security.r + self.r
+                        self.touch = 1
+                    else:
+                        self.touch = 0
                     if self.y <= lower_y:
                         self.y = lower_y
                         self.state = 4
                         self.direction = self.table[2]
+
 # self.state = 4 - кушает (прописано в eat)
+
         if self.state == 5:
             # студент уходит
-            if self.x < -self.r: # освобождает индекс места, если ушел
+            if self.x < -2*self.r: # удаляется с поля, если ушел
                 self.state = 6
 
             if self.table[0] == 0:
@@ -146,11 +196,21 @@ class Student():
                 if self.y >= coridor2:
                     self.direction = 'u'
                     self.y -= self.v
+                    if char_collide(self, security) and security.y + security.r > self.y - self.r:
+                        self.y = security.y + security.r + self.r
+                        self.touch = 1
+                    else:
+                        self.touch = 0
                     if self.y <= coridor2:
                         self.y = coridor2 - 1
-                elif self.x > -50:
+                else:
                     self.direction = 'l'
                     self.x -= self.v
+                    if char_collide(self, security) and security.x + security.r > self.x - self.r:
+                        self.x = security.x + security.r + self.r
+                        self.touch = 1
+                    else:
+                        self.touch = 0
 
 
 
@@ -159,20 +219,22 @@ class Student():
                 if self.y < coridor3:
                     self.direction = 'd'
                     self.y += self.v
+                    if char_collide(self, security) and security.y < self.y + self.r:
+                        self.y = security.y - self.r
+                        self.touch = 1
+                    else:
+                        self.touch = 0
                     if self.y >= coridor3:
                         self.y = coridor3
-                elif self.x > -50:
+                else:
                     self.direction = 'l'
                     self.x -= self.v
+                    if char_collide(self, security) and security.x + security.r > self.x - self.r:
+                        self.x = security.x + security.r + self.r
+                        self.touch = 1
+                    else:
+                        self.touch = 0
 
-        if self.state == 6:
-            # если ушел достаточно далеко, то освобождает место
-            if self.table[0] == 0:
-                upper_active[self.number_table] = 1
-                self.state = 7
-            else:
-                lower_active[self.number_table] = 1
-                self.state = 7
     def pay(self):
         if self.state == 1:
             dollar.set_alpha(255 * self.pay_time // pay_time)
@@ -215,14 +277,18 @@ class Student():
             pic = pygame.transform.rotate(stud_green, angle)
             stud_green_rect.center = self.x, self.y
             self.window.blit(pic, stud_green_rect)
+            pygame.draw.rect(self.window, red, stud_green_rect, 2)
 
+        
 
     # Проверяем, находится ли охранник рядом со студентом, который не является вором, если да, то количество жизней охранника уменьшается
-    def hittest(self, obj):
-        if ((obj.r / 2 + self.r) >= (((self.x - (obj.x + obj.r / 2)) ** 2 + (self.y - (obj.y + obj.r / 2)) ** 2)) ** 0.5) and self.kill == 0:
-            obj.live -= 1
-            self.kill = 1 # Ставим единицу, чтобы больше жизни у охранника не отнимались из-за данного студента
-
+    def hittest(self, security):
+        if self.touch:
+            if self.minus_life:
+                security.live -= 1
+                self.minus_life = 0
+        else:
+            self.minus_life = 1
 
         return False
 
@@ -237,39 +303,31 @@ class Thief(Student):
         self.pay_time = 0
 
     def draw(self):
-        # Если охранник поймал красного, то этот красный пропадает с игрового поля
-        if self.kill == 0:
-            if self.direction == 'r':
-                angle = 0
-            elif self.direction == 'l':
-                angle = 180
-            elif self.direction == 'd':
-                angle = 270
-            elif self.direction == 'u':
-                angle = 90
-            if self.state == 0:
-                pic = pygame.transform.rotate(stud_blue, angle)
-                stud_blue_rect.center = self.x, self.y
-                self.window.blit(pic, stud_blue_rect)
-            else:
-                pic = pygame.transform.rotate(stud_red, angle)
-                stud_red_rect.center = self.x, self.y
-                self.window.blit(pic, stud_red_rect)
+        if self.direction == 'r':
+            angle = 0
+        elif self.direction == 'l':
+            angle = 180
+        elif self.direction == 'd':
+            angle = 270
+        elif self.direction == 'u':
+            angle = 90
+        if self.state == 0:
+            pic = pygame.transform.rotate(stud_blue, angle)
+            stud_blue_rect.center = self.x, self.y
+            self.window.blit(pic, stud_blue_rect)
         else:
-            if self.kill == 1:
-                self.kill = 2
-                self.state = 6 # меняем значение, чтобы часы не рисовались, когда игрока уже нет
+            pic = pygame.transform.rotate(stud_red, angle)
+            stud_red_rect.center = self.x, self.y
+            self.window.blit(pic, stud_red_rect)
+            pygame.draw.rect(self.window, red, stud_red_rect, 2)
 
 
-    def hittest(self, obj):
-        if ((obj.r / 2 + self.r) >= (((self.x - (obj.x + obj.r / 2)) ** 2 + (self.y - (obj.y + obj.r / 2)) ** 2)) ** 0.5) and self.kill == 0:
-            self.kill = 1
+
+    def hittest(self, security):
+        if self.touch:
             return True
-        if self.x < 1 and self.kill == 0 and self.state > 2:
-            print('NO')
-            obj.live -= 1
-            self.kill = 1 # меняем на 2, чтобы место не освобождалось постоянно, даже когда вора нет, а осободилось только 1 раз
+        else:
+            return False
 
-
-        return False
+    
 

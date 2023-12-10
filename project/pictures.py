@@ -37,6 +37,7 @@ food2_rect = food2.get_rect()
 stud_green = pygame.image.load('project/student_green.png')
 stud_green = pygame.transform.scale(stud_green, (50, 50))
 stud_green_rect = stud_green.get_rect()
+student_r = stud_green.get_width() / 2
 
 stud_red = pygame.image.load('project/student_red.png')
 stud_red = pygame.transform.scale(stud_red, (50, 50))
@@ -50,6 +51,11 @@ ksp = pygame.image.load('project/ksp.png')
 ksp = pygame.transform.scale(ksp, (400, 400))
 ksp_rect = ksp.get_rect()
 ksp_rect.center = 420, 200
+
+security_pic = pygame.image.load('project/student_blue.png')
+security_pic = pygame.transform.scale(security_pic, (50, 50))
+security_pic_rect = security_pic.get_rect()
+security_r = security_pic.get_width()
 
 #колонны
 green_column = pygame.image.load('зеленое.png').convert_alpha()

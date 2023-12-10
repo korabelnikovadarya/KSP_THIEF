@@ -56,22 +56,24 @@ rules_button = Button('Правила', window, 150, 450, d_blue, l_blue)
 exit_button = Button('Выход', window, 650, 450, d_red, l_red)
 back_button = Button('К началу', window, 400, 500, d_blue, l_blue)
 
-#
+#барьеры
 barriers = [
-    Barrier(gc_x, gc_y, gc_width, gc_height, green_column),
-    Barrier(rc_x, rc_y, rc_width, rc_height, red_column),
-    Barrier(bc_x, bc_y, bc_width, bc_height, blue_column),
-    Barrier(744, 219, 56, 152)]  # колонны и серая стойка около кассы
+    Barrier(window, gc_x, gc_y, gc_width, gc_height, green_column),
+    Barrier(window, rc_x, rc_y, rc_width, rc_height, red_column),
+    Barrier(window, bc_x, bc_y, bc_width, bc_height, blue_column),
+    Barrier(window, 744, 219, 56, 152)]  # колонны и серая стойка около кассы
 
 # координата по ОХ левого края стола, ширина стола, высота стола
 for x in tables_left_coords:
-    barriers.append(Barrier(x, top_y_table, 0.8 * table_rect_width, table_height))
+    barriers.append(Barrier(window, x, top_y_table, 0.8 * table_rect_width, table_height))
 for x in tables_left_coords_2:
-    barriers.append(Barrier(x, 540, 0.8 * table_rect_width, table_small_height))
+    barriers.append(Barrier(window, x, 540, 0.8 * table_rect_width, table_small_height))
 #barriers.append(Barrier(second_row_x, second_row_y, second_row_long, table_small_height)
 
+
+
 security = Security(window, x1, y1)
-students = set()
+students = []
 SCORE = 0
 RECORD = -1
 new_record = False # поставил ли игрок новый рекорд в раунде
@@ -82,6 +84,10 @@ while gameNow:
 
     if gameNow == 2:
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:  
+                # Если нажат крестик, то окно игры закрывается
+                gameNow = 0
+
             # Отслеживаем координаты мыши
             if event.type == pygame.MOUSEMOTION:
                 pass
@@ -104,6 +110,7 @@ while gameNow:
 
             if s.hittest(security):
                 SCORE += 1
+                # Если охранник поймал красного, то этот красный пропадает с игрового поля
                 students.remove(s)
 
 
@@ -118,13 +125,12 @@ while gameNow:
             else:
                 students.append(Thief(window))
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:  
-                # Если нажат крестик, то окно игры закрывается
-                gameNow = 0
-
         # Движение охранника
         keys = pygame.key.get_pressed()
+        security.move(keys, barriers, students)
+
+        #region new_security version
+        """
         new_security = security.move(keys)
 
         pygame.display.update()
@@ -140,12 +146,22 @@ while gameNow:
         if not collided:
             security = new_security
 
+        """
+        #endregion 
+
         for i in range(len(students)):
             if i == 0:
                 # самый первый студент
-                students[i].move(0)
+                students[i].move(0, security)
             else:
-                students[i].move(students[i - 1])
+                students[i].move(students[i - 1], security)
+        
+        # удаление неактивных студентов с поля
+        for s in students:
+            if s.state == 6:
+                if s.money == 0:
+                    security.live -= 1
+                students.remove(s)
         
         if security.live < 1:
             gameNow = 4

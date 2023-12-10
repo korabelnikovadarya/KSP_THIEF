@@ -1,4 +1,6 @@
 import numpy as np
+from barriers import *
+import pygame
 
 #константы
 FPS = 30 # Частота обновления кадров (30 к/с)
@@ -118,3 +120,4 @@ eat_time = 2 * FPS
 
 # Количество жизней охранника
 live = 3
+
