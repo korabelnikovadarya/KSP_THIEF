@@ -6,6 +6,19 @@ def decision(probability):
     # Выдает 1 с данной вероятностью
     return random() < probability
 
+def draw_game_score(score, x, y):
+    height = 40
+    width = 50
+    d_coord = 5
+
+    pygame.draw.rect(window, grey, (x - width / 2 - d_coord, y - height / 2 + d_coord, width, height))
+    pygame.draw.rect(window, yellow, (x - width / 2, y - height / 2, width, height))
+    pygame.draw.rect(window, black, (x - width / 2, y - height / 2, width, height), 5)
+    font = pygame.font.SysFont(None, 35)
+    
+    img = font.render(str(score), True, black)
+    window.blit(img, (x - img.get_width() / 2, y - img.get_height() / 2))
+
 def draw_heart(screen, x, y):
     heart_rect.center = x, y
     screen.blit(heart, heart_rect)

@@ -20,7 +20,7 @@ heart = pygame.transform.scale(heart, (heart_size, heart_size))
 heart_rect = heart.get_rect()
 
 # Основной фон
-background = pygame.image.load('project/background_without_columns.jpg').convert_alpha()
+background = pygame.image.load('project/background.jpg').convert_alpha()
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
 # Еда
@@ -52,19 +52,14 @@ ksp_rect = ksp.get_rect()
 ksp_rect.center = 420, 200
 
 #колонны
-green_column = pygame.image.load('зеленое.png')
+green_column = pygame.image.load('зеленое.png').convert_alpha()
 gc_width= green_column.get_width()
 gc_height= green_column.get_height()
 
-gc_width= 87
-gc_height= 87
-
 gc_x, gc_y = (155, 214)
 
-window.fill(white)
-window.blit(green_column, (10, 20))
 
-red_column = pygame.image.load('красное.png')
+red_column = pygame.image.load('красное.png').convert_alpha()
 rc_width= red_column.get_width()
 rc_height= red_column.get_height()
 
@@ -72,7 +67,7 @@ rc_width= 86
 rc_height= 86
 rc_x, rc_y = (327, 214)
 
-blue_column = pygame.image.load('синевое.png')
+blue_column = pygame.image.load('синевое.png').convert_alpha()
 bc_width= blue_column.get_width()
 bc_height= blue_column.get_height()
 

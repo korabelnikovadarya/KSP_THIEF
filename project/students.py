@@ -182,13 +182,13 @@ class Student():
     def eat(self):
         # часы, когда кушает
         if self.state == 4:
-            if self.pay_time > 0:
-                self.pay_time -= 1
+            if self.eat_time > 0:
+                self.eat_time -= 1
 
                 pygame.draw.circle(self.window, black, (self.x + 2, self.y), 17)
                 pygame.draw.line(self.window, white, [self.x + 2, self.y],
-                                 [self.x - 15 * sin(pi + 2 * pi / 60 * (60 - self.pay_time)),
-                                  self.y + 15 * cos(pi + 2 * pi / 60 * (60 - self.pay_time))], 3)
+                                 [self.x - 15 * sin(pi + 2 * pi / 60 * (60 - self.eat_time)),
+                                  self.y + 15 * cos(pi + 2 * pi / 60 * (60 - self.eat_time))], 3)
             else:
                 self.state = 5
                 if self.table[0] == 0:

@@ -51,7 +51,7 @@ class Security():
         """
         отрисовывает количество жизней охраны
         """
-        x = 600
+        x = 150
         y = 550
         for i in range(self.live):
             draw_heart(self.window, x + i * heart_size * 1.5, y)

@@ -90,14 +90,12 @@ while gameNow:
 
         #region отрисовка экрана
         window.blit(background, (0, 0))
+        draw_game_score(SCORE, 50, 550)
         security.draw_lifes()
         # отладочная печать
         #draw_seats(window)
 
         security.draw()
-
-        for b in barriers:
-            b.draw()
 
         for s in students:
             s.draw()
@@ -130,6 +128,7 @@ while gameNow:
         new_security = security.move(keys)
 
         pygame.display.update()
+
         collided = False
 
         for barrier in barriers:
