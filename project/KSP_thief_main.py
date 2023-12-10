@@ -58,9 +58,9 @@ back_button = Button('К началу', window, 400, 500, d_blue, l_blue)
 
 #
 barriers = [
-    Barrier(155, 214, 84, 83, pygame.image.load('зеленое.png')),
-    Barrier(327, 214, 85, 85, pygame.image.load('красное.png')),
-    Barrier(498, 214, 82, 83, pygame.image.load('синевое.png')),
+    Barrier(gc_x, gc_y, gc_width, gc_height, green_column),
+    Barrier(rc_x, rc_y, rc_width, rc_height, red_column),
+    Barrier(bc_x, bc_y, bc_width, bc_height, blue_column),
     Barrier(744, 219, 56, 152)]  # колонны и серая стойка около кассы
 
 # координата по ОХ левого края стола, ширина стола, высота стола
@@ -68,12 +68,10 @@ for x in tables_left_coords:
     barriers.append(Barrier(x, top_y_table, 0.8 * table_rect_width, table_height))
 for x in tables_left_coords_2:
     barriers.append(Barrier(x, 540, 0.8 * table_rect_width, table_small_height))
-#barriers.append(Barrier(second_row_x, second_row_y, second_row_long, table_small_height))
-
-
+#barriers.append(Barrier(second_row_x, second_row_y, second_row_long, table_small_height)
 
 security = Security(window, x1, y1)
-students = []
+students = set()
 SCORE = 0
 RECORD = -1
 new_record = False # поставил ли игрок новый рекорд в раунде
@@ -81,10 +79,6 @@ new_record = False # поставил ли игрок новый рекорд в
 
 # Функция pygame.event.get() возвращает все события, происходящие на игровом поле:
 while gameNow:
-    window.blit(background, (0, 0))
-    security.draw_lifes()
-    # отладочная печать
-    draw_seats(window)
 
     if gameNow == 2:
         for event in pygame.event.get():
@@ -102,6 +96,9 @@ while gameNow:
 
         security.draw()
 
+        for b in barriers:
+            b.draw()
+
         for s in students:
             s.draw()
             s.pay()
@@ -109,6 +106,7 @@ while gameNow:
 
             if s.hittest(security):
                 SCORE += 1
+                students.remove(s)
 
 
         pygame.display.update()

@@ -111,8 +111,10 @@ x1 = LEFT
 y1 = TOP + (HEIGHT - BOTTOM - TOP) / 2
 
 # время оплаты
-
 pay_time = 1 * FPS
+
+# время еды
+eat_time = 2 * FPS
 
 # Количество жизней охранника
 live = 3

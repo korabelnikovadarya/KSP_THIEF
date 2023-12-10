@@ -28,7 +28,8 @@ class Student():
         # 5 - уходит
         # 6 -
 
-        self.kill = 0 # Переменная, в которую запоминаем, подходил ли охранник или нет
+        self.kill = 0 # переменная, которая обеспечивает только одну -жизнь при касании зеленого
+
 
         self.color = green
 
@@ -36,6 +37,7 @@ class Student():
 
         self.time_goaway = (2 * self.r + DS) // self.v
         self.pay_time = pay_time + self.time_goaway
+        self.eat_time = eat_time
 
     def move(self, obj):
         # учет студента спереди
@@ -51,7 +53,7 @@ class Student():
             if self.pay_time > 0:
                 self.pay_time -= 1
             else:
-                if self.state < 2:
+                if self.state <= 1:
 
                     # студент выбирает место
                     if decision(0.5) and any(upper_active):
@@ -62,12 +64,11 @@ class Student():
                         idx_free, = np.nonzero(upper_active)
                         # из свободных выбираем одно
                         idx_table = np.random.choice(idx_free)
-                        self.number_table = idx_table # запоминаем индекс занятого стола, чтобы потом этот стол освободить
                         # направление взгляда когда будет сидеть за столом
                         direction = 'r' if idx_table % 2 == 0 else 'l'
 
-                        self.table = (0, x_table_coord[idx_table], direction)
-                        # 0 - верхний стол, координата места по x, направление взгляда
+                        self.table = (0, x_table_coord[idx_table], direction, idx_table)
+                        # 0 - верхний стол, координата места по x, направление взгляда, индекс стола
 
                         # делаем место неактивным
                         upper_active[idx_table] = 0
@@ -79,8 +80,8 @@ class Student():
                         idx_free, = np.nonzero(lower_active)
                         idx_table = np.random.choice(idx_free)
                         direction = 'r' if idx_table % 2 == 0 else 'l'
-                        self.table = (1, x_table_coord[idx_table], direction)
-                        # 1 - нижний стол, координата места по x, направление взгляда
+                        self.table = (1, x_table_coord[idx_table], direction, idx_table)
+                        # 1 - нижний стол, координата места по x, направление взгляда, индекс стола
                         lower_active[idx_table] = 0
                     #else:
                         # если стол не выбран, то чел просто стоит
@@ -93,12 +94,6 @@ class Student():
                 self.y += self.v  
                 self.time_goaway -= 1
         if self.state == 3:
-
-            if (self.table[1] == self.x and self.y == upper_y) or (self.table[1] == self.x and self.y == lower_y):
-                self.pay_time = 60
-                self.state = 4
-                #print(self.pay_time, self.state)
-
 
             if self.table[0] == 0:
                 # движение к верхнему столу
@@ -117,7 +112,7 @@ class Student():
                     self.y += self.v 
                     if self.y >= upper_y:
                         self.y = upper_y
-                        self.state = 3
+                        self.state = 4
                         self.direction = self.table[2]
 
 
@@ -138,12 +133,12 @@ class Student():
                     self.y -= self.v 
                     if self.y <= lower_y:
                         self.y = lower_y
-                        self.state = 3
+                        self.state = 4
                         self.direction = self.table[2]
 # self.state = 4 - кушает (прописано в eat)
         if self.state == 5:
             # студент уходит
-            if self.x < - 2 * self.r: # освобождает индекс места, если ушел
+            if self.x < -self.r: # освобождает индекс места, если ушел
                 self.state = 6
 
             if self.table[0] == 0:
@@ -196,7 +191,10 @@ class Student():
                                   self.y + 15 * cos(pi + 2 * pi / 60 * (60 - self.pay_time))], 3)
             else:
                 self.state = 5
-
+                if self.table[0] == 0:
+                    upper_active[self.table[3]] = 1
+                if self.table[0] == 1:
+                    lower_active[self.table[3]] = 1
 
 
     def draw(self):

@@ -15,9 +15,9 @@ class Barrier:  # КОЛОННЫ, СТОЛЫ
         self.window = window
         self.surface = surface
 
-    def draw(self, window):
+    def draw(self):
         if self.surface is not None:
-            window.blit(self.surface, (self.x, self.y))
+            self.window.blit(self.surface, (self.x, self.y))
 
     def collide(self, security: Security) -> bool:
         security_rect = pygame.Rect(security.x, security.y, security.r, security.r)
