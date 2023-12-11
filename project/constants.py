@@ -91,7 +91,7 @@ HEIGHT = 600
 
 RIGHT = 10
 LEFT = 10
-BOTTOM = 10
+BOTTOM = 3
 
 # ширина ленты выдачи
 TOP = 123

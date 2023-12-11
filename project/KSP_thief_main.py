@@ -101,8 +101,6 @@ while gameNow:
 
         #region отрисовка экрана
         window.blit(background, (0, 0))
-        draw_game_score(SCORE, 50, 550)
-        security.draw_lifes()
         # отладочная печать
         #draw_seats(window)
 
@@ -117,6 +115,9 @@ while gameNow:
                 SCORE += 1
                 # Если охранник поймал красного, то этот красный пропадает с игрового поля
                 students.remove(s)
+        
+        draw_game_score(SCORE, 50, 550)
+        security.draw_lifes()
 
 
         pygame.display.update()
