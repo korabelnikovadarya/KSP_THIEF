@@ -71,7 +71,11 @@ for x in tables_left_coords_2:
     barriers.append(Barrier(window, x, 540, 0.8 * table_rect_width, table_small_height))
 #barriers.append(Barrier(second_row_x, second_row_y, second_row_long, table_small_height)
 
-
+#активность верзних и нижних мест
+# 1 - место свободно
+# 0 - место занято
+upper_active = np.array([1] * n_tables * 2)
+lower_active = np.array([1] * n_tables * 2)
 
 security = Security(window, x1, y1)
 students = []
@@ -107,7 +111,7 @@ while gameNow:
         for s in students:
             s.draw()
             s.pay()
-            s.eat()
+            s.eat(upper_active, lower_active)
 
             if s.hittest(security):
                 SCORE += 1
@@ -148,7 +152,7 @@ while gameNow:
         
         for s in students:
             #движение студентов
-            s.move(security, students)
+            s.move(security, students, upper_active, lower_active)
 
             # удаление неактивных студентов с поля
             if s.state == 6:

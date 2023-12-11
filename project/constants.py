@@ -62,11 +62,6 @@ tables_left_coords = [left_x_table + i * (table_width + table_gap) for i in rang
 tables_left_coords_2 = [second_row_x + i * (table_width + table_gap) for i in range(7)]
 
 
-#активность верзних и нижних мест
-# 1 - место свободно
-# 0 - место занято
-upper_active = np.array([1] * n_tables * 2)
-lower_active = np.array([1] * n_tables * 2)
 
 for i in range(n_tables):
     # левое место у i стола

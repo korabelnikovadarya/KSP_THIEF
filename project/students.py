@@ -40,7 +40,7 @@ class Student():
         self.pay_time = pay_time + self.time_goaway
         self.eat_time = eat_time
 
-    def move(self,security, students):
+    def move(self,security, students, upper_active, lower_active):
         if self.state == 0:
             self.x += self.v
             
@@ -241,7 +241,7 @@ class Student():
             dollar_rect.center = self.x, self.y - (pay_time - self.pay_time)
             self.window.blit(dollar, dollar_rect)
 
-    def eat(self):
+    def eat(self, upper_active, lower_active):
         # часы, когда кушает
         if self.state == 4:
             if self.eat_time > 0:
