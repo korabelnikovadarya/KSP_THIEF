@@ -88,6 +88,10 @@ new_record = False # поставил ли игрок новый рекорд в
 while gameNow:
 
     if gameNow == 2:
+        if pygame.time.get_ticks() % FPS == 0:
+            print(upper_active)
+            print(lower_active)
+            print()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
                 # Если нажат крестик, то окно игры закрывается
@@ -114,6 +118,11 @@ while gameNow:
             if s.hittest(security):
                 SCORE += 1
                 # Если охранник поймал красного, то этот красный пропадает с игрового поля
+                if s.state == 3 or s.state == 4:
+                    if s.table[0] == 0:
+                        upper_active[s.table[3]] = 1
+                    if s.table[0] == 1:
+                        lower_active[s.table[3]] = 1
                 students.remove(s)
         
         draw_game_score(SCORE, 50, 550)
