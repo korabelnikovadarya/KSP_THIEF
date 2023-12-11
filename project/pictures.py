@@ -35,16 +35,16 @@ food2_rect = food2.get_rect()
 # Студенты
 
 stud_green = pygame.image.load('project/student_green.png')
-stud_green = pygame.transform.scale(stud_green, (50, 50))
+stud_green = pygame.transform.scale(stud_green, (35, 35))
 stud_green_rect = stud_green.get_rect()
 student_r = stud_green.get_width() / 2
 
 stud_red = pygame.image.load('project/student_red.png')
-stud_red = pygame.transform.scale(stud_red, (50, 50))
+stud_red = pygame.transform.scale(stud_red, (35, 35))
 stud_red_rect = stud_red.get_rect()
 
 stud_blue = pygame.image.load('project/student_blue.png')
-stud_blue = pygame.transform.scale(stud_blue, (50, 50))
+stud_blue = pygame.transform.scale(stud_blue, (35, 35))
 stud_blue_rect = stud_blue.get_rect()
 
 ksp = pygame.image.load('project/ksp.png')

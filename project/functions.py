@@ -1,6 +1,7 @@
 from random import random
 from pictures import *
 import pygame
+from math import sin, cos, pi # для часов
 
 def decision(probability):
     # Выдает 1 с данной вероятностью
@@ -134,3 +135,31 @@ def sec_stud_collide(security, students):
             return True
         
     return False
+
+def draw_clock(window, x, y, time):
+    r = 14
+    width = 3
+    length = 12
+
+    pygame.draw.circle(window, black, (x, y), r)
+
+    angle = 2 * pi * (eat_time - time) / eat_time
+
+    top_left_x = x - width / 2 * cos(angle)
+    top_left_y = y - width / 2 * sin(angle)
+
+    top_right_x = x - width / 2 * cos(angle) + length * sin(angle)
+    top_right_y = y - width / 2 * sin(angle) - length * cos(angle)
+
+    bottom_left_x = x + width / 2 * cos(angle)
+    bottom_left_y = y + width / 2 * sin(angle)
+
+    bottom_right_x = x + width / 2 * cos(angle) + length * sin(angle)
+    bottom_right_y = y + width / 2 * sin(angle) - length * cos(angle)
+
+    pygame.draw.polygon(window, white, [
+        (top_left_x, top_left_y),
+        (top_right_x, top_right_y),
+        (bottom_right_x, bottom_right_y),
+        (bottom_left_x, bottom_left_y)
+    ])

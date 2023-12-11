@@ -247,10 +247,7 @@ class Student():
             if self.eat_time > 0:
                 self.eat_time -= 1
 
-                pygame.draw.circle(self.window, black, (self.x + 2, self.y), 17)
-                pygame.draw.line(self.window, white, [self.x + 2, self.y],
-                                 [self.x - 15 * sin(pi + 2 * pi / 60 * (60 - self.eat_time)),
-                                  self.y + 15 * cos(pi + 2 * pi / 60 * (60 - self.eat_time))], 3)
+                draw_clock(self.window, self.x, self.y - 10, self.eat_time)
             else:
                 self.state = 5
                 if self.table[0] == 0:
