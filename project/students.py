@@ -40,13 +40,13 @@ class Student():
         self.pay_time = pay_time + self.time_goaway
         self.eat_time = eat_time
 
-    def move(self, obj, security):
-        # учет студента спереди
-        if obj and obj.state <= 2 and obj.x - obj.r <= self.x + self.r + DS:
-            self.x = obj.x - obj.r - self.r - DS
-            return
+    def move(self,security, students):
         if self.state == 0:
             self.x += self.v
+            
+            #eсли студент воткнулся в студента, то он стоит на месте
+            stud_stud_collide(self, students)
+
             if self.x >= PAY_DESK:
                 self.state = 1
             return
@@ -59,7 +59,7 @@ class Student():
                     # студент выбирает место
                     if decision(0.5) and any(upper_active):
                         # c вероятносью 0.5 выбираем верхний ряд
-                        self.state = 2
+                        self.state = 3
 
                         # находим все индексы свободных мест сверху
                         idx_free, = np.nonzero(upper_active)
@@ -76,7 +76,7 @@ class Student():
 
                     elif any(lower_active):
                         # c вероятносью 0.5 выбираем нижний ряд
-                        self.state = 2
+                        self.state = 3
 
                         idx_free, = np.nonzero(lower_active)
                         idx_table = np.random.choice(idx_free)
@@ -87,13 +87,13 @@ class Student():
                     #else:
                         # если стол не выбран, то чел просто стоит
                      #   pass
+        """
         if self.state == 2:
             if self.time_goaway > 1:
                 self.direction = 'd'
                 self.y += self.v  
-                # если студент воткнулся в охранника, то он стоит на месте
-                if char_collide(self, security) and security.y < self.y + self.r:
-                    self.y = security.y - self.r
+                # если студент воткнулся в охранника или студента, то он стоит на месте
+                if stud_sec_collide(self, security):
                     self.touch = 1
                 else:
                     self.touch = 0
@@ -101,12 +101,12 @@ class Student():
             elif self.time_goaway == 1:
                 self.y += self.v
                 # если студент воткнулся в охранника, то он стоит на месте
-                if char_collide(self, security) and security.y < self.y + self.r:
-                    self.y = security.y - self.r
+                if stud_sec_collide(self, security):
                     self.touch = 1
                 else:
                     self.touch = 0
                     self.state = 3
+        """
         if self.state == 3:
 
             if self.table[0] == 0:
@@ -114,33 +114,33 @@ class Student():
                 if self.y < coridor2:
                     self.direction = 'd'
                     self.y += self.v 
-                    if char_collide(self, security) and security.y < self.y + self.r:
-                        self.y = security.y - self.r
+                    if stud_sec_collide(self, security):
                         self.touch = 1
                     else:
                         self.touch = 0
+                    stud_stud_collide(self, students)
                     if self.y >= coridor2:
                         self.y = coridor2
 
                 elif self.x > self.table[1]:
                     self.direction = 'l'
                     self.x -= self.v
-                    if char_collide(self, security) and security.x + security.r > self.x - self.r:
-                        self.x = security.x + security.r + self.r
+                    if stud_sec_collide(self, security):
                         self.touch = 1
                     else:
                         self.touch = 0
+                    stud_stud_collide(self, students)
                     if self.x <= self.table[1]:
                         self.x = self.table[1]
 
                 elif self.y < upper_y:
                     self.direction = 'd'
                     self.y += self.v 
-                    if char_collide(self, security) and security.y < self.y + self.r:
-                        self.y = security.y - self.r
+                    if stud_sec_collide(self, security):
                         self.touch = 1
                     else:
                         self.touch = 0
+                    stud_stud_collide(self, students)
                     if self.y >= upper_y:
                         self.y = upper_y
                         self.state = 4
@@ -152,33 +152,33 @@ class Student():
                 if self.y < coridor3 and self.x > self.table[1]:
                     self.direction = 'd'
                     self.y += self.v 
-                    if char_collide(self, security) and security.y < self.y + self.r:
-                        self.y = security.y - self.r
+                    if stud_sec_collide(self, security):
                         self.touch = 1
                     else:
                         self.touch = 0
+                    stud_stud_collide(self, students)
                     if self.y >= coridor3:
                         self.y = coridor3
                     
                 elif self.x > self.table[1]:
                     self.direction = 'l'
                     self.x -= self.v
-                    if char_collide(self, security) and security.x + security.r > self.x - self.r:
-                        self.x = security.x + security.r + self.r
+                    if stud_sec_collide(self, security):
                         self.touch = 1
                     else:
                         self.touch = 0
+                    stud_stud_collide(self, students)
                     if self.x <= self.table[1]:
                         self.x = self.table[1]
 
                 elif self.y > lower_y:
                     self.direction = 'u'
                     self.y -= self.v 
-                    if char_collide(self, security) and security.y + security.r > self.y - self.r:
-                        self.y = security.y + security.r + self.r
+                    if stud_sec_collide(self, security):
                         self.touch = 1
                     else:
                         self.touch = 0
+                    stud_stud_collide(self, students)
                     if self.y <= lower_y:
                         self.y = lower_y
                         self.state = 4
@@ -196,21 +196,21 @@ class Student():
                 if self.y >= coridor2:
                     self.direction = 'u'
                     self.y -= self.v
-                    if char_collide(self, security) and security.y + security.r > self.y - self.r:
-                        self.y = security.y + security.r + self.r
+                    if stud_sec_collide(self, security):
                         self.touch = 1
                     else:
                         self.touch = 0
+                    stud_stud_collide(self, students)
                     if self.y <= coridor2:
                         self.y = coridor2 - 1
                 else:
                     self.direction = 'l'
                     self.x -= self.v
-                    if char_collide(self, security) and security.x + security.r > self.x - self.r:
-                        self.x = security.x + security.r + self.r
+                    if stud_sec_collide(self, security):
                         self.touch = 1
                     else:
                         self.touch = 0
+                    stud_stud_collide(self, students)
 
 
 
@@ -219,21 +219,21 @@ class Student():
                 if self.y < coridor3:
                     self.direction = 'd'
                     self.y += self.v
-                    if char_collide(self, security) and security.y < self.y + self.r:
-                        self.y = security.y - self.r
+                    if stud_sec_collide(self, security):
                         self.touch = 1
                     else:
                         self.touch = 0
+                    stud_stud_collide(self, students)
                     if self.y >= coridor3:
                         self.y = coridor3
                 else:
                     self.direction = 'l'
                     self.x -= self.v
-                    if char_collide(self, security) and security.x + security.r > self.x - self.r:
-                        self.x = security.x + security.r + self.r
+                    if stud_sec_collide(self, security):
                         self.touch = 1
                     else:
                         self.touch = 0
+                    stud_stud_collide(self, students)
 
     def pay(self):
         if self.state == 1:

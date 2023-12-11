@@ -10,7 +10,7 @@ class Security():
         self.window = window
         self.x = x
         self.y = y
-        self.live = 3
+        self.live = live
         self.v = 10
         self.r = security_r
         self.direction = 'r'
@@ -60,6 +60,8 @@ class Security():
             for b in barriers:
                 if b.collide(self):
                     self.y = b.y - self.r
+
+        sec_stud_collide(self, students)
 
     #region new_security version
     """ new_security version

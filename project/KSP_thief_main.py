@@ -50,6 +50,7 @@ gameNow = 1
 # 4 - lose - экран проигрыша
 # 0 - завершение игры
 
+
 #кнопки
 play_button = Button('Играть', window, 400, 450, d_green, l_green)
 rules_button = Button('Правила', window, 150, 450, d_blue, l_blue)
@@ -125,10 +126,6 @@ while gameNow:
             else:
                 students.append(Thief(window))
 
-        # Движение охранника
-        keys = pygame.key.get_pressed()
-        security.move(keys, barriers, students)
-
         #region new_security version
         """
         new_security = security.move(keys)
@@ -148,20 +145,21 @@ while gameNow:
 
         """
         #endregion 
-
-        for i in range(len(students)):
-            if i == 0:
-                # самый первый студент
-                students[i].move(0, security)
-            else:
-                students[i].move(students[i - 1], security)
         
-        # удаление неактивных студентов с поля
         for s in students:
+            #движение студентов
+            s.move(security, students)
+
+            # удаление неактивных студентов с поля
             if s.state == 6:
                 if s.money == 0:
                     security.live -= 1
                 students.remove(s)
+        
+        # Движение охранника
+        keys = pygame.key.get_pressed()
+        security.move(keys, barriers, students)
+
         
         if security.live < 1:
             gameNow = 4
@@ -206,6 +204,8 @@ while gameNow:
                     SCORE = 0
                     security = Security(window, x1, y1)
                     students = []
+                    upper_active = np.array([1] * n_tables * 2)
+                    lower_active = np.array([1] * n_tables * 2)
                     play_button.not_active()
                 if exit_button.push():
                     gameNow = 0
@@ -239,6 +239,8 @@ while gameNow:
                     background.set_alpha(255)
                     security = Security(window, x1, y1)
                     students = []
+                    upper_active = np.array([1] * n_tables * 2)
+                    lower_active = np.array([1] * n_tables * 2)
                     play_button.not_active()
                 if exit_button.push():
                     gameNow = 0
