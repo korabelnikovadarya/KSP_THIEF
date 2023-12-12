@@ -119,7 +119,7 @@ while gameNow:
 
         
     elif gameNow == 4:
-        window.fill(white)
+        window.fill(floor)
         background.set_alpha(100)
         window.blit(background, (0, 0))
 
@@ -157,7 +157,7 @@ while gameNow:
                 rules_button.activate(event)
                 exit_button.activate(event)
     elif gameNow == 1:
-        window.fill(white)
+        window.fill(floor)
         window.blit(background, (0, 0))
 
         window.blit(ksp, ksp_rect)
@@ -190,8 +190,9 @@ while gameNow:
                 exit_button.activate(event)
     elif gameNow == 3:
 
-        window.fill(white)
-        background.set_alpha(100)
+        window.fill(floor)
+        background.set_alpha(50)
+        rules(window)
         window.blit(background, (0, 0))
         back_button.draw()
 
