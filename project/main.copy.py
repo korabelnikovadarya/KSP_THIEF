@@ -1,7 +1,7 @@
 # Прописываем нижние две строки, чтобы не было пайгеймовской надписи "Hello from the pygame community"
-from os import environ
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+os.chdir('C:\\Users\korab\Informatic.Team')
 import pygame  # Импортируем библиотеку pygame
 from random import randint, random
 import time

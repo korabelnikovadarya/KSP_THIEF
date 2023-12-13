@@ -2,8 +2,11 @@
 from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
-import os
+from copy import copy
+from typing import Tuple
 
+import os
+#os.chdir('C:\\Users\korab\Informatic.Team')
 print(os.getcwd())
 
 import pygame  
@@ -17,7 +20,7 @@ from students import *
 from functions import *
 from security import *
 from buttons import *
-
+from barriers import *
 
 # Начало отсчета времени
 start = time.time()
@@ -38,6 +41,7 @@ pygame.display.update()
 pygame.display.set_caption("KSP_thief")  
 # Добавляем название игры в левом верхнем углу игрового окна
 
+
 gameNow = 1
 # Переменная, чтобы по ее значению понимать, какая часть игры на экране
 # 1 - start -  начальный экран
@@ -46,11 +50,6 @@ gameNow = 1
 # 4 - lose - экран проигрыша
 # 0 - завершение игры
 
-security = Security(window, x1, y1)
-students = []
-SCORE = 0
-RECORD = -1
-new_record = False # поставил ли игрок новый рекорд в раунде
 
 #кнопки
 play_button = Button('Играть', window, 400, 450, d_green, l_green)
@@ -58,24 +57,76 @@ rules_button = Button('Правила', window, 150, 450, d_blue, l_blue)
 exit_button = Button('Выход', window, 650, 450, d_red, l_red)
 back_button = Button('К началу', window, 400, 500, d_blue, l_blue)
 
+#барьеры
+barriers = [
+    Barrier(window, gc_x, gc_y, gc_width, gc_height, green_column),
+    Barrier(window, rc_x, rc_y, rc_width, rc_height, red_column),
+    Barrier(window, bc_x, bc_y, bc_width, bc_height, blue_column),
+    Barrier(window, 744, 219, 56, 152)]  # колонны и серая стойка около кассы
+
+# координата по ОХ левого края стола, ширина стола, высота стола
+for x in tables_left_coords:
+    barriers.append(Barrier(window, x, top_y_table, 0.8 * table_rect_width, table_height))
+for x in tables_left_coords_2:
+    barriers.append(Barrier(window, x, 540, 0.8 * table_rect_width, table_small_height))
+#barriers.append(Barrier(second_row_x, second_row_y, second_row_long, table_small_height)
+
+#активность верзних и нижних мест
+# 1 - место свободно
+# 0 - место занято
+upper_active = np.array([1] * n_tables * 2)
+lower_active = np.array([1] * n_tables * 2)
+
+security = Security(window, x1, y1)
+students = []
+SCORE = 0
+RECORD = -1
+new_record = False # поставил ли игрок новый рекорд в раунде
+
+
 # Функция pygame.event.get() возвращает все события, происходящие на игровом поле:
 while gameNow:
+
     if gameNow == 2:
+        if pygame.time.get_ticks() % FPS == 0:
+            print(upper_active)
+            print(lower_active)
+            print()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:  
+                # Если нажат крестик, то окно игры закрывается
+                gameNow = 0
+
+            # Отслеживаем координаты мыши
+            if event.type == pygame.MOUSEMOTION:
+                pass
+                #xm, ym = event.pos
+                #print(xm, ym)
 
         #region отрисовка экрана
         window.blit(background, (0, 0))
-        security.draw_lifes()
-
-        #отладочная печать
-        draw_seats(window)
+        # отладочная печать
+        #draw_seats(window)
 
         security.draw()
 
         for s in students:
             s.draw()
             s.pay()
+            s.eat(upper_active, lower_active)
+
             if s.hittest(security):
                 SCORE += 1
+                # Если охранник поймал красного, то этот красный пропадает с игрового поля
+                if s.state == 3 or s.state == 4:
+                    if s.table[0] == 0:
+                        upper_active[s.table[3]] = 1
+                    if s.table[0] == 1:
+                        lower_active[s.table[3]] = 1
+                students.remove(s)
+        
+        draw_game_score(SCORE, 50, 550)
+        security.draw_lifes()
 
 
         pygame.display.update()
@@ -89,24 +140,46 @@ while gameNow:
             else:
                 students.append(Thief(window))
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:  
-                # Если нажат крестик, то окно игры закрывается
-                gameNow = 0
+        #region new_security version
+        """
+        new_security = security.move(keys)
 
+        pygame.display.update()
+
+        collided = False
+
+        for barrier in barriers:
+            collided = barrier.collide(new_security)
+            pygame.display.update()
+            if collided:
+                break
+
+        if not collided:
+            security = new_security
+
+        """
+        #endregion 
+        
+        for s in students:
+            #движение студентов
+            s.move(security, students, upper_active, lower_active)
+
+            # удаление неактивных студентов с поля
+            if s.state == 6:
+                if s.money == 0:
+                    security.live -= 1
+                students.remove(s)
+        
         # Движение охранника
         keys = pygame.key.get_pressed()
-        security.move(keys)
+        security.move(keys, barriers, students)
 
-        for i in range(len(students)):
-            if i == 0:
-                # самый первый студент
-                students[i].move(0)
-            else:
-                students[i].move(students[i - 1])
         
         if security.live < 1:
             gameNow = 4
+            upper_active = np.array([1] * n_tables * 2)
+            lower_active = np.array([1] * n_tables * 2)
+
             background.set_alpha(100)
             if SCORE > RECORD:
                 RECORD = SCORE
@@ -145,6 +218,8 @@ while gameNow:
                     SCORE = 0
                     security = Security(window, x1, y1)
                     students = []
+                    upper_active = np.array([1] * n_tables * 2)
+                    lower_active = np.array([1] * n_tables * 2)
                     play_button.not_active()
                 if exit_button.push():
                     gameNow = 0
@@ -178,6 +253,8 @@ while gameNow:
                     background.set_alpha(255)
                     security = Security(window, x1, y1)
                     students = []
+                    upper_active = np.array([1] * n_tables * 2)
+                    lower_active = np.array([1] * n_tables * 2)
                     play_button.not_active()
                 if exit_button.push():
                     gameNow = 0
