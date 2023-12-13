@@ -271,6 +271,7 @@ while gameNow:
         background.set_alpha(100)
         window.blit(background, (0, 0))
         back_button.draw()
+        draw_rules(window, text)
 
         pygame.display.update()
         clock.tick(FPS)

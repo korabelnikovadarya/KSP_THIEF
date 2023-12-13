@@ -163,3 +163,7 @@ def draw_clock(window, x, y, time):
         (bottom_right_x, bottom_right_y),
         (bottom_left_x, bottom_left_y)
     ])
+
+def draw_rules(window, text):
+
+    pass
