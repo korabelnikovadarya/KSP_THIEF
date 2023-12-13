@@ -56,7 +56,7 @@ def draw_score(window, score, record, new_record, x, y, width, height):
         img = font.render('Ваш рекорд: ' + str(record), True, black)
         window.blit(img, (x - img.get_width() / 2, y - img.get_height() / 2 + height / 3))
 
-<<<<<<< HEAD
+
 def rules(window):
     # if gameNow==3:
         line_pos_y = 5
@@ -70,7 +70,7 @@ def rules(window):
                     new_line = line.rstrip().split('//')
                     instruct= font.render(new_line[i], True, black)
                     window.blit(instruct, (line_pos_x, line_pos_y))
-=======
+
 def stud_sec_collide(student, security) -> bool:
     # студент воткнулся в охранника
     student_rect = pygame.Rect(student.x - student.r, student.y - student.r, 2 * student.r, 2 * student.r)
@@ -178,4 +178,4 @@ def draw_clock(window, x, y, time):
         (bottom_right_x, bottom_right_y),
         (bottom_left_x, bottom_left_y)
     ])
->>>>>>> refs/remotes/origin/main
+
