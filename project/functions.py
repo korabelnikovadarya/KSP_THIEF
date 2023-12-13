@@ -63,7 +63,7 @@ def rules(window):
         line_pos_x = 5
         i = 0
         font = pygame.font.SysFont(None, rules_size)
-        with open("Instructions.txt", encoding="utf8") as f:
+        with open("project/Instructions.txt", encoding="utf8") as f:
             for line in f.readlines():
                 for i in range(leng):
                     line_pos_y = line_pos_y + 25

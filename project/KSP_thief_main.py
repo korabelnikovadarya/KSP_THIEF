@@ -260,6 +260,7 @@ while gameNow:
                     gameNow = 0
                 if rules_button.push():
                     gameNow = 3
+                    background.set_alpha(100)
                     rules_button.not_active()
             elif event.type == pygame.MOUSEMOTION:
                 play_button.activate(event)
@@ -268,11 +269,9 @@ while gameNow:
     elif gameNow == 3:
 
         window.fill(floor)
-        background.set_alpha(50)
-        rules(window)
         window.blit(background, (0, 0))
+        rules(window)
         back_button.draw()
-        draw_rules(window, text)
 
         pygame.display.update()
         clock.tick(FPS)
