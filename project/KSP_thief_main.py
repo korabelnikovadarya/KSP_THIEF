@@ -88,10 +88,6 @@ new_record = False # поставил ли игрок новый рекорд в
 while gameNow:
 
     if gameNow == 2:
-        if pygame.time.get_ticks() % FPS == 0:
-            print(upper_active)
-            print(lower_active)
-            print()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
                 # Если нажат крестик, то окно игры закрывается
