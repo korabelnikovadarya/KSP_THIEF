@@ -56,6 +56,20 @@ def draw_score(window, score, record, new_record, x, y, width, height):
         img = font.render('Ваш рекорд: ' + str(record), True, black)
         window.blit(img, (x - img.get_width() / 2, y - img.get_height() / 2 + height / 3))
 
+def rules(window):
+    # if gameNow==3:
+        line_pos_y = 5
+        line_pos_x = 5
+        i = 0
+        font = pygame.font.SysFont(None, rules_size)
+        with open("Instructions.txt", encoding="utf8") as f:
+            for line in f.readlines():
+                for i in range(leng):
+                    line_pos_y = line_pos_y + 25
+                    new_line = line.rstrip().split('//')
+                    instruct= font.render(new_line[i], True, black)
+                    window.blit(instruct, (line_pos_x, line_pos_y))
+=======
 def stud_sec_collide(student, security) -> bool:
     # студент воткнулся в охранника
     student_rect = pygame.Rect(student.x - student.r, student.y - student.r, 2 * student.r, 2 * student.r)
@@ -163,7 +177,4 @@ def draw_clock(window, x, y, time):
         (bottom_right_x, bottom_right_y),
         (bottom_left_x, bottom_left_y)
     ])
-
-def draw_rules(window, text):
-
-    pass
+>>>>>>> refs/remotes/origin/main
