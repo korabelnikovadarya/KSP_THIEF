@@ -35,7 +35,7 @@
 
 ## Диаграмма классов (UML-диаграмма)
 
-![](https://github.com/korabelnikovadarya/KSP_THIEF/blob/main/UMLdiagram.png)
+-![](https://github.com/korabelnikovadarya/KSP_THIEF/blob/main/UMLdiagram.png)
 
 
 
