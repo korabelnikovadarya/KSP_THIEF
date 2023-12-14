@@ -10,9 +10,6 @@ from security import *
 from buttons import *
 from barriers import *
 
-# Не выводим надпись "Hello from the pygame community"
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-
 # Начало отсчета времени
 start = time.time()
 
