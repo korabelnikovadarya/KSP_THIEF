@@ -136,25 +136,6 @@ while gameNow:
             else:
                 students.append(Thief(window))
 
-        #region new_security version
-        """
-        new_security = security.move(keys)
-
-        pygame.display.update()
-
-        collided = False
-
-        for barrier in barriers:
-            collided = barrier.collide(new_security)
-            pygame.display.update()
-            if collided:
-                break
-
-        if not collided:
-            security = new_security
-
-        """
-        #endregion 
         
         for s in students:
             #движение студентов
