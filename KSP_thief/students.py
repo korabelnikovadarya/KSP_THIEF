@@ -5,6 +5,13 @@ from functions import *
 from math import sin, cos, pi # для часов
 
 class Student():
+    """
+    Класс студентов.
+    Честные зеленые студенты производят оплату на кассе,
+    выбирают место за столиком, едят
+    и уходят из столовой.
+    Студенты не могут проходить сквозь охранника.
+    """
     def __init__(self, window: pygame.Surface):
         self.window = window
         self.money = 1
@@ -251,6 +258,11 @@ class Student():
             self.minus_life = 1
         return False
 class Thief(Student):
+    """
+    Класс воров. Наследует атрибуты класса Student.
+    Воры могут садиться за столики или покидать карту
+    сразу после прохода через кассу.
+    """
     def __init__(self, window: pygame.Surface):
         super().__init__(window)
         self.color = red
@@ -277,10 +289,8 @@ class Thief(Student):
             self.window.blit(pic, stud_red_rect)
             pygame.draw.rect(self.window, red, stud_red_rect, 2)
     def hittest(self, security):
-        if self.touch:
-            return True
-        else:
-            return False
+        return self.touch
+
 
     
 

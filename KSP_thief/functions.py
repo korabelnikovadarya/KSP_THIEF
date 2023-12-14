@@ -19,10 +19,14 @@ def draw_game_score(score, x, y):
 def draw_heart(screen, x, y):
     heart_rect.center = x, y
     screen.blit(heart, heart_rect)
-def draw_seats(screen):  # Черные точки-ориентиры для столов
-    pass
 
 def draw_score(window, score, record, new_record, x, y, width, height):
+    """
+    Фурнция выводит счет охранника -
+    количество пойманных воров.
+    Старое значение счета сохраняется,
+    поэтому всегда можно побить свой рекорд.
+    """
     d_coord = 15
     pygame.draw.rect(window, grey, (x - width / 2 - d_coord, y - height / 2 + d_coord, width, height))
     pygame.draw.rect(window, yellow, (x - width / 2, y - height / 2, width, height))
@@ -50,6 +54,10 @@ def draw_score(window, score, record, new_record, x, y, width, height):
         window.blit(img, (x - img.get_width() / 2, y - img.get_height() / 2 + height / 3))
 
 def rules(window):
+    """
+    Функция отвечает за вывод на экран правил игры,
+    хранящихся в Instructions.txt.
+    """
     line_pos_y = 5
     line_pos_x = 5
     i = 0
@@ -63,7 +71,10 @@ def rules(window):
                 window.blit(instruct, (line_pos_x, line_pos_y))
 
 def stud_sec_collide(student, security) -> bool:
-    # студент воткнулся в охранника
+    """
+    Функция отвечает за проверку столкновений
+    каждого из студентов с охранником.
+    """
     student_rect = pygame.Rect(student.x - student.r, student.y - student.r, 2 * student.r, 2 * student.r)
     security_rect = pygame.Rect(security.x, security.y, security.r, security.r)
     if pygame.Rect.colliderect(student_rect, security_rect):
@@ -91,7 +102,10 @@ def stud_sec_collide(student, security) -> bool:
 
 
 def stud_stud_collide(s1, students) -> bool:
-    # студент втыкается в студента
+    """
+     Функция отвечает за проверку столкновений
+     студентов друг с другом.
+     """
     s1_rect = pygame.Rect(s1.x - s1.r, s1.y - s1.r, 2 * s1.r, 2 * s1.r)
     for s2 in students:
         if s2 != s1:
@@ -117,7 +131,9 @@ def stud_stud_collide(s1, students) -> bool:
 
 
 def sec_stud_collide(security, students):
-    # охранник воткнулся в студента
+    """
+    Функция проверяет, столкнулся ли охранник с каким-нибудь студентом.
+    """
     security_rect = pygame.Rect(security.x, security.y, security.r, security.r)
     for student in students:
         student_rect = pygame.Rect(student.x - student.r, student.y - student.r, 2 * student.r, 2 * student.r)

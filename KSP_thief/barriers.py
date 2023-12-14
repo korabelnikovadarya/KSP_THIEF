@@ -1,6 +1,11 @@
 import pygame
 
-class Barrier:  # КОЛОННЫ, СТОЛЫ
+
+class Barrier:
+    """
+    Класс барьеров - колонны и столы.
+    Охранник не может ходить сквозь колонны и столы.
+    """
     def __init__(self, window, x, y, width, height, surface=None):
         self.x = x
         self.y = y

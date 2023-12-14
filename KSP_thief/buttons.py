@@ -51,12 +51,10 @@ class Button():
 
     def push(self):
         """
-        если мышка находится на кнопке, то она активна, если в этот момент MOUSEBUTTONDOWN, то кнопка нажата
+        Если мышка находится на кнопке, то она активна,
+        если в этот момент MOUSEBUTTONDOWN, то кнопка нажата
         """
-        if self.active:
-            return True
-        else:
-            return False
+        return self.active
 
     def not_active(self):
         self.active = 0

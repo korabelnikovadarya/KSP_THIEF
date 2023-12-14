@@ -45,7 +45,7 @@ rules_button = Button('Правила', window, 150, 450, d_blue, l_blue)
 exit_button = Button('Выход', window, 650, 450, d_red, l_red)
 back_button = Button('К началу', window, 400, 500, d_blue, l_blue)
 
-#барьеры
+# барьеры
 barriers = [
     Barrier(window, gc_x, gc_y, gc_width, gc_height, green_column),
     Barrier(window, rc_x, rc_y, rc_width, rc_height, red_column),
@@ -136,6 +136,7 @@ while gameNow:
             play_button.x, play_button.y = (200, 150)
             rules_button.x, rules_button.y = (200, 300) 
             exit_button.x, exit_button.y = (200, 450)
+            score = 0
 
     elif gameNow == 4:
         window.fill(floor)

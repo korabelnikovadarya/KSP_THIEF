@@ -104,4 +104,4 @@ pay_time = 1 * FPS
 eat_time = 2 * FPS
 
 # Количество жизней охранника
-live = 110
+live = 8

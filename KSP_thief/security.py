@@ -3,6 +3,13 @@ from constants import *
 import pygame
 from functions import *
 class Security():
+    """
+    Класс охранника отвечает за движение охранника.
+    У охранника есть ограниченное количество жизней.
+    В переменную score ведется подсчет количества очков -
+    количества пойманный воров.
+    Если у охранника закончатся жизни, игра прервется.
+    """
     def __init__(self, window: pygame.Surface, x, y):
         self.window = window
         self.x = x
@@ -24,7 +31,7 @@ class Security():
                 if b.collide(self):
                     self.x = b.x + b.width
 
-        if keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_RIGHT]:
             self.x += self.v
             self.direction = 'r'
             if self.x + self.r > WIDTH - RIGHT:
@@ -34,7 +41,7 @@ class Security():
                 if b.collide(self):
                     self.x = b.x - self.r
 
-        if keys[pygame.K_UP]:
+        elif keys[pygame.K_UP]:
             self.y -= self.v
             self.direction = 'u'
             if self.y < TOP:
@@ -44,7 +51,7 @@ class Security():
                 if b.collide(self):
                     self.y = b.y + b.height
 
-        if keys[pygame.K_DOWN]:
+        elif keys[pygame.K_DOWN]:
             self.y += self.v
             self.direction = 'd'
             if self.y + self.r > HEIGHT - BOTTOM:
