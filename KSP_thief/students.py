@@ -10,12 +10,11 @@ class Student():
         self.money = 1
         self.number_table = 0 # будем запоминать индекс стола, чтобы потом этот стол освобождать
         self.v = 5
-        #self.v = 0.2
         self.r = student_r
-        self.x = -2*self.r
+        self.x = -2 * self.r
         self.y = 78
 
-        #направление движения студента для правильной отрисовки
+        # направление движения студента для правильной отрисовки
         self.direction = 'r' # right, left, down, up
 
         self.state = 0
@@ -31,11 +30,8 @@ class Student():
         self.touch = 0 #касаются ли охранник и студент
         self.minus_life = 1 # переменная, которая обеспечивает только одну -жизнь при касании зеленого
 
-
         self.color = green
-
         # время оплаты + время отхода от кассы
-
         self.time_goaway = (2 * self.r + DS) // self.v
         self.pay_time = pay_time + self.time_goaway
         self.eat_time = eat_time
@@ -43,8 +39,7 @@ class Student():
     def move(self,security, students, upper_active, lower_active):
         if self.state == 0:
             self.x += self.v
-            
-            #eсли студент воткнулся в студента, то он стоит на месте
+            # eсли студент воткнулся в студента, то он стоит на месте
             stud_stud_collide(self, students)
 
             if self.x >= PAY_DESK:
@@ -60,7 +55,6 @@ class Student():
                     if decision(0.5) and any(upper_active):
                         # c вероятносью 0.5 выбираем верхний ряд
                         self.state = 3
-
                         # находим все индексы свободных мест сверху
                         idx_free, = np.nonzero(upper_active)
                         # из свободных выбираем одно
@@ -84,29 +78,6 @@ class Student():
                         self.table = (1, x_table_coord[idx_table], direction, idx_table)
                         # 1 - нижний стол, координата места по x, направление взгляда, индекс стола
                         lower_active[idx_table] = 0
-                    #else:
-                        # если стол не выбран, то чел просто стоит
-                     #   pass
-        """
-        if self.state == 2:
-            if self.time_goaway > 1:
-                self.direction = 'd'
-                self.y += self.v  
-                # если студент воткнулся в охранника или студента, то он стоит на месте
-                if stud_sec_collide(self, security):
-                    self.touch = 1
-                else:
-                    self.touch = 0
-                    self.time_goaway -= 1
-            elif self.time_goaway == 1:
-                self.y += self.v
-                # если студент воткнулся в охранника, то он стоит на месте
-                if stud_sec_collide(self, security):
-                    self.touch = 1
-                else:
-                    self.touch = 0
-                    self.state = 3
-        """
         if self.state == 3:
 
             if self.table[0] == 0:
@@ -211,9 +182,6 @@ class Student():
                     else:
                         self.touch = 0
                     stud_stud_collide(self, students)
-
-
-
             else:
                 # движение на выход от нижнего стола
                 if self.y < coridor3:
@@ -246,7 +214,6 @@ class Student():
         if self.state == 4:
             if self.eat_time > 0:
                 self.eat_time -= 1
-
                 draw_clock(self.window, self.x, self.y - 10, self.eat_time)
             else:
                 self.state = 5
@@ -254,7 +221,6 @@ class Student():
                     upper_active[self.table[3]] = 1
                 if self.table[0] == 1:
                     lower_active[self.table[3]] = 1
-
 
     def draw(self):
         if self.direction == 'r':
@@ -275,9 +241,6 @@ class Student():
             stud_green_rect.center = self.x, self.y
             self.window.blit(pic, stud_green_rect)
             pygame.draw.rect(self.window, red, stud_green_rect, 2)
-
-        
-
     # Проверяем, находится ли охранник рядом со студентом, который не является вором, если да, то количество жизней охранника уменьшается
     def hittest(self, security):
         if self.touch:
@@ -286,11 +249,7 @@ class Student():
                 self.minus_life = 0
         else:
             self.minus_life = 1
-
         return False
-
-
-
 class Thief(Student):
     def __init__(self, window: pygame.Surface):
         super().__init__(window)
@@ -317,9 +276,6 @@ class Thief(Student):
             stud_red_rect.center = self.x, self.y
             self.window.blit(pic, stud_red_rect)
             pygame.draw.rect(self.window, red, stud_red_rect, 2)
-
-
-
     def hittest(self, security):
         if self.touch:
             return True

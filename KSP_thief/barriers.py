@@ -17,5 +17,3 @@ class Barrier:  # КОЛОННЫ, СТОЛЫ
         security_rect = pygame.Rect(security.x, security.y, security.r, security.r)
         barrier_rect = pygame.Rect(self.x, self.y, self.width, self.height)
         return pygame.Rect.colliderect(barrier_rect, security_rect)
-
-

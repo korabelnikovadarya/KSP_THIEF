@@ -1,19 +1,7 @@
-# Прописываем нижние две строки, чтобы не было пайгеймовской надписи "Hello from the pygame community"
-from os import environ
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-
-from copy import copy
-from typing import Tuple
-
+from os import environ, chdir
 import os
-#os.chdir('C:\\Users\korab\Informatic.Team')
-print(os.getcwd())
-
-import pygame  
-# Импортируем библиотеку pygame
-
+import pygame
 import time
-
 from constants import *
 from pictures import *
 from students import *
@@ -22,25 +10,26 @@ from security import *
 from buttons import *
 from barriers import *
 
+# Не выводим надпись "Hello from the pygame community"
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+
 # Начало отсчета времени
 start = time.time()
 
-pygame.init()  
 # Инициализируем библиотеку pygame
+pygame.init()
 
-window = pygame.display.set_mode((WIDTH, HEIGHT))  
 # Задаем размеры игрового окна
+window = pygame.display.set_mode((WIDTH, HEIGHT))
 
-
-clock = pygame.time.Clock()  
 # Перменнная для подсчета времени
+clock = pygame.time.Clock()
 
-pygame.display.update()  
 # Обновляем содержимое игрового поля
+pygame.display.update()
 
-pygame.display.set_caption("KSP_thief")  
 # Добавляем название игры в левом верхнем углу игрового окна
-
+pygame.display.set_caption("KSP_thief")
 
 gameNow = 1
 # Переменная, чтобы по ее значению понимать, какая часть игры на экране
@@ -50,8 +39,7 @@ gameNow = 1
 # 4 - lose - экран проигрыша
 # 0 - завершение игры
 
-
-#кнопки
+# кнопки
 play_button = Button('Играть', window, 400, 450, d_green, l_green)
 rules_button = Button('Правила', window, 150, 450, d_blue, l_blue)
 exit_button = Button('Выход', window, 650, 450, d_red, l_red)
@@ -69,9 +57,8 @@ for x in tables_left_coords:
     barriers.append(Barrier(window, x, top_y_table, 0.8 * table_rect_width, table_height))
 for x in tables_left_coords_2:
     barriers.append(Barrier(window, x, 540, 0.8 * table_rect_width, table_small_height))
-#barriers.append(Barrier(second_row_x, second_row_y, second_row_long, table_small_height)
 
-#активность верзних и нижних мест
+# активность верхних и нижних мест
 # 1 - место свободно
 # 0 - место занято
 upper_active = np.array([1] * n_tables * 2)
@@ -79,31 +66,19 @@ lower_active = np.array([1] * n_tables * 2)
 
 security = Security(window, x1, y1)
 students = []
-SCORE = 0
-RECORD = -1
+score = 0
+record = -1
 new_record = False # поставил ли игрок новый рекорд в раунде
 
-
-# Функция pygame.event.get() возвращает все события, происходящие на игровом поле:
 while gameNow:
-
     if gameNow == 2:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
                 # Если нажат крестик, то окно игры закрывается
                 gameNow = 0
 
-            # Отслеживаем координаты мыши
-            if event.type == pygame.MOUSEMOTION:
-                pass
-                #xm, ym = event.pos
-                #print(xm, ym)
-
-        #region отрисовка экрана
+        # region отрисовка экрана
         window.blit(background, (0, 0))
-        # отладочная печать
-        #draw_seats(window)
-
         security.draw()
 
         for s in students:
@@ -112,7 +87,7 @@ while gameNow:
             s.eat(upper_active, lower_active)
 
             if s.hittest(security):
-                SCORE += 1
+                score += 1
                 # Если охранник поймал красного, то этот красный пропадает с игрового поля
                 if s.state == 3 or s.state == 4:
                     if s.table[0] == 0:
@@ -121,13 +96,11 @@ while gameNow:
                         lower_active[s.table[3]] = 1
                 students.remove(s)
         
-        draw_game_score(SCORE, 50, 550)
+        draw_game_score(score, 50, 550)
         security.draw_lifes()
-
-
         pygame.display.update()
         clock.tick(FPS)
-        #endregion 
+        # endregion
 
         # генерация студента
         if decision(prob_stud):
@@ -136,11 +109,9 @@ while gameNow:
             else:
                 students.append(Thief(window))
 
-        
         for s in students:
-            #движение студентов
+            # движение студентов
             s.move(security, students, upper_active, lower_active)
-
             # удаление неактивных студентов с поля
             if s.state == 6:
                 if s.money == 0:
@@ -150,7 +121,6 @@ while gameNow:
         # Движение охранника
         keys = pygame.key.get_pressed()
         security.move(keys, barriers, students)
-
         
         if security.live < 1:
             gameNow = 4
@@ -158,8 +128,8 @@ while gameNow:
             lower_active = np.array([1] * n_tables * 2)
 
             background.set_alpha(100)
-            if SCORE > RECORD:
-                RECORD = SCORE
+            if score > record:
+                record = score
                 new_record = True
             else:
                 new_record = False
@@ -167,19 +137,18 @@ while gameNow:
             rules_button.x, rules_button.y = (200, 300) 
             exit_button.x, exit_button.y = (200, 450)
 
-        
     elif gameNow == 4:
         window.fill(floor)
         background.set_alpha(100)
         window.blit(background, (0, 0))
 
-        #рисую кнопки
+        # рисую кнопки
         play_button.draw()
         rules_button.draw()
         exit_button.draw()
 
-        #рисую счет
-        draw_score(window, SCORE, RECORD, new_record, 600, 300, 300, 400)
+        # рисую счет
+        draw_score(window, score, record, new_record, 600, 300, 300, 400)
 
         pygame.display.update()
         clock.tick(FPS)
@@ -188,11 +157,11 @@ while gameNow:
             if event.type == pygame.QUIT:
                 gameNow = 0
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                #проверка нажаты ли кнопки
+                # проверка, нажаты ли кнопки
                 if play_button.push():
                     gameNow = 2
                     background.set_alpha(255)
-                    SCORE = 0
+                    score = 0
                     security = Security(window, x1, y1)
                     students = []
                     upper_active = np.array([1] * n_tables * 2)
@@ -204,20 +173,17 @@ while gameNow:
                     gameNow = 3
                     rules_button.not_active()
             elif event.type == pygame.MOUSEMOTION:
-                #проверяю активацию кнопок
+                # проверяю активацию кнопок
                 play_button.activate(event)
                 rules_button.activate(event)
                 exit_button.activate(event)
     elif gameNow == 1:
         window.fill(floor)
         window.blit(background, (0, 0))
-
         window.blit(ksp, ksp_rect)
-
         play_button.draw()
         rules_button.draw()
         exit_button.draw()
-
         pygame.display.update()
         clock.tick(FPS)
 
@@ -249,7 +215,6 @@ while gameNow:
         window.blit(background, (0, 0))
         rules(window)
         back_button.draw()
-
         pygame.display.update()
         clock.tick(FPS)
 
