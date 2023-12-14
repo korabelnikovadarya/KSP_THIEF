@@ -162,8 +162,6 @@ class Student():
                         self.state = 4
                         self.direction = self.table[2]
 
-# self.state = 4 - кушает (прописано в eat)
-
         if self.state == 5:
             # студент уходит
             if self.x < -2*self.r: # удаляется с поля, если ушел
