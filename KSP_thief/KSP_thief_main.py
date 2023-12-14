@@ -133,7 +133,6 @@ while gameNow:
             play_button.x, play_button.y = (200, 150)
             rules_button.x, rules_button.y = (200, 300) 
             exit_button.x, exit_button.y = (200, 450)
-            score = 0
 
     elif gameNow == 4:
         window.fill(floor)
@@ -193,6 +192,7 @@ while gameNow:
                     gameNow = 2
                     background.set_alpha(255)
                     security = Security(window, x1, y1)
+                    score = 0
                     students = []
                     upper_active = np.array([1] * n_tables * 2)
                     lower_active = np.array([1] * n_tables * 2)
