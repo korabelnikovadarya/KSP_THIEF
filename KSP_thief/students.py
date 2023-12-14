@@ -247,7 +247,6 @@ class Student():
             pic = pygame.transform.rotate(stud_green, angle)
             stud_green_rect.center = self.x, self.y
             self.window.blit(pic, stud_green_rect)
-            pygame.draw.rect(self.window, red, stud_green_rect, 2)
     # Проверяем, находится ли охранник рядом со студентом, который не является вором, если да, то количество жизней охранника уменьшается
     def hittest(self, security):
         if self.touch:
@@ -287,7 +286,7 @@ class Thief(Student):
             pic = pygame.transform.rotate(stud_red, angle)
             stud_red_rect.center = self.x, self.y
             self.window.blit(pic, stud_red_rect)
-            pygame.draw.rect(self.window, red, stud_red_rect, 2)
+
     def hittest(self, security):
         return self.touch
 

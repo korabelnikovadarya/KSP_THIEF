@@ -75,7 +75,6 @@ class Security():
         pic = pygame.transform.rotate(security_pic, angle)
         security_pic_rect.topleft = self.x, self.y
         self.window.blit(pic, security_pic_rect)
-        pygame.draw.rect(self.window, red, security_pic_rect, 2)
 
     def draw_lifes(self):
         """
