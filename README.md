@@ -34,7 +34,8 @@
 - python3 KSP_thief_main.py
 
 - Диаграмма классов (UML-диаграмма)
-![](https://github.com/korabelniikova/KSP_THIEF/raw/main/UMLdiagram.png)
+![](https://github.com/korabelniikova/KSP_THIEF/UMLdiagram.png)
+
 
 
 
