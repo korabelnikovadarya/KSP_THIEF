@@ -30,6 +30,7 @@
 - git clone https://github.com/korabelnikovadarya/KSP_THIEF.git
 - cd KSP_THIEF
 - pip install -r requirements.txt
+- cd KSP_thief
 - python3 KSP_thief_main.py
 
 
